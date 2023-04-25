@@ -16,7 +16,13 @@ export default function JoinGame() {
           <div className="flex justify-center items-center w-[41px] h-[41px] font-Zen text-base bg-step rounded-full text-black">
             1
           </div>
-          <span className="text-xs font-Zen text-stepTitle mt-2 drop-shadow-title">
+          <span
+            className="text-xs font-Zen text-stepTitle mt-2"
+            style={{
+              textShadow:
+                "0px 2px 0px rgba(0, 0, 0, 0.2), 0px 0px 44px #329BFF",
+            }}
+          >
             JOIN A GAME
           </span>
         </div>
@@ -31,7 +37,12 @@ export default function JoinGame() {
       </div>
 
       <div className="md:flex justify-start items-center flex-col px-7.5 xl:px-20 py-10">
-        <span className="text-3.5xl text-step font-Zen drop-shadow-md	 bg-transparent">
+        <span
+          className="text-3.5xl text-step font-Zen  bg-transparent"
+          style={{
+            textShadow: "0px 2px 0px rgba(0, 0, 0, 0.2), 0px 0px 44px #329BFF",
+          }}
+        >
           JOIN A GAME
         </span>
         <span className="text-base text-white font-Poppins  bg-transparent w-100">

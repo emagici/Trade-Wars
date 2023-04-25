@@ -8,7 +8,9 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { useState } from "react";
+
 import JoinGameBtn from "./JoinGameBtn";
 
 type Props = {
@@ -51,11 +53,18 @@ const rows = [
 const TeamList = ({ onClickVault }: Props) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
+  const [selectedTeam, setSelectedTeam] = useState("");
+  const [isDeposit, setDepositFlag] = useState(false);
+  const router = useRouter();
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
-
+  const handleConnect = () => {
+    setDepositFlag(true);
+  };
+  const handleDeposit = () => {
+    router.push("/GameStatus");
+  };
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -64,10 +73,14 @@ const TeamList = ({ onClickVault }: Props) => {
   };
   return (
     <div className="hidden flex items-center justify-center md:flex flex-col font-semibold px-7.5 xl:px-20 pt-[68px] pb-15 xl:py-25">
+      <div className="font-Zen text-base text-step w-[600px] ">
+        {selectedTeam == "" ? "Select Team" : selectedTeam + " selected"}
+      </div>
       <TableContainer
         sx={{
           maxHeight: 600,
           maxWidth: 600,
+          marginTop: "14px",
           "& th": {
             color: "#E8E1D4",
             backgroundColor: "#43372C",
@@ -76,7 +89,7 @@ const TeamList = ({ onClickVault }: Props) => {
           "& td": {
             color: "#BAA67E",
             fontFamily: "Zen Dots, sans-serif",
-            backgroundColor: "#211C16",
+            // backgroundColor: "#211C16",
           },
         }}
       >
@@ -93,7 +106,16 @@ const TeamList = ({ onClickVault }: Props) => {
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, idx) => {
                 return (
-                  <TableRow hover tabIndex={-1} key={idx}>
+                  <TableRow
+                    hover
+                    tabIndex={idx}
+                    key={idx}
+                    onClick={() => !isDeposit && setSelectedTeam(row["team"])}
+                    style={{
+                      backgroundColor:
+                        selectedTeam === row["team"] ? "#111617" : "#211C16",
+                    }}
+                  >
                     <TableCell key="game" align="left">
                       <div className="w-100 h-100 flex flex-row align-center">
                         <Image
@@ -149,6 +171,33 @@ const TeamList = ({ onClickVault }: Props) => {
           },
         }}
       />
+      {!isDeposit && (
+        <button
+          className="rounded w-[124px] h-[50px] px-4 py-1 bg-tableHeader z-50 drop-shadow-join  mt-[50px]"
+          disabled={selectedTeam == ""}
+          onClick={handleConnect}
+        >
+          <span className="text-[12px] font-Zen text-btnText">Next</span>
+        </button>
+      )}
+      {isDeposit && (
+        <div className="flex flex-row item-center mt-[50px]">
+          <button
+            className="rounded w-[222px] h-[50px] px-4 py-1 bg-btn z-50 drop-shadow-join"
+            disabled={selectedTeam == ""}
+            onClick={handleDeposit}
+          >
+            <span className="text-base font-Zen text-header">Enter Wager</span>
+          </button>
+          <button
+            className="rounded w-[172px] h-[50px] px-4 py-1 z-50 drop-shadow-join ml-[16px] bg-btn"
+            disabled={selectedTeam == ""}
+            onClick={handleConnect}
+          >
+            <span className="text-base font-Zen text-header">Withdraw</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };

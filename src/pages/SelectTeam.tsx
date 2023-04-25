@@ -1,5 +1,5 @@
-import { useState } from "react";
 import TeamList from "@/components/common/TeamList";
+import { useState } from "react";
 
 export default function SelectTeam() {
   const [activeVaultIndex, setActiveVaultIndex] = useState(0);
@@ -11,7 +11,13 @@ export default function SelectTeam() {
           <div className="flex justify-center items-center w-[41px] h-[41px] font-Zen text-base bg-step rounded-full text-black">
             1
           </div>
-          <span className="text-xs font-Zen text-stepTitle mt-2 drop-shadow-title">
+          <span
+            className="text-xs font-Zen text-stepTitle mt-2 drop-shadow-title"
+            style={{
+              textShadow:
+                "0px 2px 0px rgba(0, 0, 0, 0.2), 0px 0px 44px #329BFF",
+            }}
+          >
             JOIN A GAME
           </span>
         </div>
@@ -26,7 +32,12 @@ export default function SelectTeam() {
       </div>
 
       <div className="md:flex justify-start items-center flex-col px-7.5 xl:px-20 py-10">
-        <span className="text-3.5xl text-yellow font-Zen drop-shadow-md	 bg-transparent">
+        <span
+          className="text-3.5xl text-yellow font-Zen drop-shadow-md	 bg-transparent"
+          style={{
+            textShadow: "0px 2px 0px rgba(0, 0, 0, 0.2), 0px 0px 44px #329BFF",
+          }}
+        >
           JOIN A GAME
         </span>
         <span className="text-base text-white font-Poppins  bg-transparent w-100">
@@ -50,7 +61,12 @@ export default function SelectTeam() {
           Winning amount would be
         </span>
 
-        <span className="text-[32px] text-step font-Zen drop-shadow-md bg-transparent">
+        <span
+          className="text-[32px] text-step font-Zen drop-shadow-md bg-transparent"
+          style={{
+            textShadow: "0px 2px 0px rgba(0, 0, 0, 0.2), 0px 0px 44px #329BFF",
+          }}
+        >
           ETH 100.91
         </span>
       </div>

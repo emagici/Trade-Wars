@@ -9,6 +9,7 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Image from "next/image";
 import { useState } from "react";
+
 import JoinGameBtn from "./JoinGameBtn";
 
 type Props = {
@@ -31,7 +32,7 @@ const columns: Column[] = [
   },
   {
     id: "wager",
-    label: "Wager\u00a0Amount",
+    label: "Total\u00a0Wagered",
     minWidth: 170,
     format: (value: number) => value.toLocaleString("en-US"),
   },
@@ -73,72 +74,75 @@ const TeamStatusList = ({ onClickVault }: Props) => {
   };
   return (
     <div className="hidden flex items-center md:flex flex-col font-semibold px-7.5 xl:px-20 pt-[68px] pb-15 xl:py-25">
-      <TableContainer
-        sx={{
-          maxHeight: 600,
-          "& th": {
-            color: "#E8E1D4",
-            backgroundColor: "#43372C",
-            fontFamily: "Zen Dots, sans-serif",
-          },
-          "& td": {
-            color: "#BAA67E",
-            fontFamily: "Zen Dots, sans-serif",
-            backgroundColor: "#211C16",
-          },
-        }}
-      >
-        <Table
-          aria-label="sticky table"
+      <div className="flex items-center w-[1156px] border-[12px] border-gap">
+        <TableContainer
           sx={{
-            [`& .${tableCellClasses.root}`]: {
-              borderBottomColor: "rgba(95, 89, 89, 0.54)",
+            maxHeight: 600,
+            maxWidth: 1156,
+            "& th": {
+              color: "#E8E1D4",
+              backgroundColor: "#43372C",
+              fontFamily: "Zen Dots, sans-serif",
+            },
+            "& td": {
+              color: "#BAA67E",
+              fontFamily: "Zen Dots, sans-serif",
+              backgroundColor: "#211C16",
             },
           }}
         >
-          <TableHead className="bg-tableHeader text-sm font-Zen font-tableColor">
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row, idx) => {
-                return (
-                  <TableRow hover tabIndex={-1} key={idx}>
-                    <TableCell key="game" align="left">
-                      <div className="w-100 h-100 flex flex-row align-center">
-                        <Image
-                          src="/assets/icons/user.png"
-                          alt="spice"
-                          width={32}
-                          height={32}
-                          style={{ marginRight: "10px" }}
-                        />
-                        <span className="leading-[32px]">{row["team"]}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell key="players" align="left">
-                      {row["players"]}
-                    </TableCell>
-                    <TableCell key="status" align="left">
-                      ETH {row["wager"]}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-          </TableBody>
-        </Table>
-      </TableContainer>
+          <Table
+            aria-label="sticky table"
+            sx={{
+              [`& .${tableCellClasses.root}`]: {
+                borderBottomColor: "rgba(95, 89, 89, 0.54)",
+              },
+            }}
+          >
+            <TableHead className="bg-tableHeader text-sm font-Zen font-tableColor">
+              <TableRow>
+                {columns.map((column) => (
+                  <TableCell
+                    key={column.id}
+                    align={column.align}
+                    style={{ minWidth: column.minWidth }}
+                  >
+                    {column.label}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, idx) => {
+                  return (
+                    <TableRow hover tabIndex={-1} key={idx}>
+                      <TableCell key="game" align="left">
+                        <div className="w-100 h-100 flex flex-row align-center">
+                          <Image
+                            src="/assets/icons/user.png"
+                            alt="spice"
+                            width={32}
+                            height={32}
+                            style={{ marginRight: "10px" }}
+                          />
+                          <span className="leading-[32px]">{row["team"]}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell key="players" align="left">
+                        {row["players"]}
+                      </TableCell>
+                      <TableCell key="status" align="left">
+                        ETH {row["wager"]}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
     </div>
   );
 };
