@@ -1,64 +1,20 @@
-import Image from "next/image";
-import { useWallet, useNotification } from "@/hooks";
-import { shortAddress, checkIfBlocked } from "@/utils";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 
 const JumpBtn = () => {
-  const { connect, account } = useWallet();
-  const [blockedRegion, setBlockedRegion] = useState<string>();
-
-  const { showNotification, hideNotification } = useNotification();
-
-  useEffect(() => {
-    checkIfBlocked().then(setBlockedRegion);
-  }, []);
-
-  const handleMouseEnter = () => {
-    if (blockedRegion) {
-      showNotification(
-        `You are accessing this website from ${blockedRegion}.`,
-        "The following countries are geo-blocked: United States, Canada, North Korea, Syria, Iran, Cuba, and Russia."
-      );
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (blockedRegion) {
-      hideNotification();
-    }
-  };
+  const router = useRouter();
 
   const handleConnect = async () => {
-    if (!blockedRegion) {
-      await connect();
-    }
+    router.push("/JoinGame");
+    console.log("abc");
   };
 
   return (
-    <div>
-      {account ? (
-        <div className="flex items-center gap-3.5">
-          <Image
-            src="/assets/images/vaultIcon.svg"
-            width={32}
-            height={32}
-            alt=""
-          />
-          <span className="text-xs xl:text-sm text-light">
-            {shortAddress(account)}
-          </span>
-        </div>
-      ) : (
-        <button
-          className="text-yellow rounded w-[156px] h-[51px] px-4 py-1 bg-btn mt-[180px]"
-          onClick={handleConnect}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          <span className="text-base font-Zen text-header">JUMP IN!</span>
-        </button>
-      )}
-    </div>
+    <button
+      className="text-yellow rounded w-[156px] h-[51px] px-4 py-1 bg-btn mt-[180px] z-50"
+      onClick={handleConnect}
+    >
+      <span className="text-base font-Zen text-header">JUMP IN!</span>
+    </button>
   );
 };
 

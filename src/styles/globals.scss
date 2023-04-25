@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 @import url('https://fonts.cdnfonts.com/css/zen-dots');
-
+@import url('https://fonts.cdnfonts.com/css/poppins');
 @import "./fonts.scss";
 
 :root {
@@ -97,14 +97,14 @@ a {
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: dark) { 
   html {
     color-scheme: dark;
   }
 }
 
 .main {
-  @apply bg-black;
+  @apply bg-gap;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */

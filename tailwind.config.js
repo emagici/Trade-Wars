@@ -7,8 +7,12 @@ module.exports = {
         SuisseIntl: ["Suisse Intl", "sans-serif"],
         Sanomat: ["Sanomat", "sans-serif"],
         Zen: ["Zen Dots", "sans-serif"],
+        Poppins: ["Poppins", "sans-serif"],
       },
       colors: {
+        win: "rgba(84, 64, 24, 1)",
+        lose: "rgba(153, 167, 171, 1)",
+        gap: "rgba(17, 22, 23, 1)",
         yellow: "rgba(163, 137, 83, 1)",
         footerYellow: "rgba(185, 161, 138, 1)",
         secondary: "#1E1E1E",
@@ -21,6 +25,19 @@ module.exports = {
         grad1: "rgba(220, 208, 197, 0)",
         grad2: "#C78A53",
         grad3: "rgba(220, 208, 197, 0) ",
+        step: "rgba(186, 166, 126, 1)",
+        stepText: "rgba(119, 130, 140, 1)",
+        stepTitle: " rgba(119, 138, 143, 1)",
+        stepInActive: "rgba(68, 87, 92, 1)",
+        tableHeader: "rgba(67, 55, 44, 1)",
+        tableColor: "rgba(232, 225, 212, 1)",
+        rogue: "rgba(28, 21, 8, 1)",
+        balance: "rgba(207, 207, 207, 1)",
+        id: "rgba(221, 226, 227, 1)",
+        loseBal: "rgba(85, 109, 115, 1)",
+        loseId: "rgba(51, 65, 69, 1)",
+        btnText: "rgba(210, 213, 217, 1)",
+        completed: "rgba(134, 110, 87, 1)",
       },
       fontSize: {
         "1.5xl": "22px",
@@ -48,6 +65,17 @@ module.exports = {
       },
       dropShadow: {
         sm: "0px 0px 5px rgba(255, 255, 255, 0.6)",
+        join: "0px 20px 28px rgba(0, 0, 0, 0.4)",
+        title: [
+          "0px 0px 44 rgba(50, 155, 255, 1)",
+          "0px 2px 0 rgba(0, 0, 0, 0.2)",
+        ],
+      },
+      boxShadow: {
+        title: [
+          "0px 0px 44px 0px rgba(50, 155, 255, 1)",
+          "0px 2px 0px 0px rgba(0, 0, 0, 0.2)",
+        ],
       },
       borderWidth: {
         1: "1px",

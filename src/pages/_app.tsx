@@ -8,7 +8,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <NotificationProvider>
       <WalletProvider>
-        <div className="flex flex-col h-full w-full relative main">
+        <div className="flex flex-col h-full w-full relative main bg-gap">
           <Header />
           <Component {...pageProps} />
           <Footer />

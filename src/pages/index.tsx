@@ -1,8 +1,9 @@
+import JumpBtn from "@/components/common/JumpBtn";
 import { News } from "@/components/vaults";
 import { Vault } from "@/types/vault";
 import Image from "next/image";
 import { useState } from "react";
-import JumpBtn from "@/components/common/JumpBtn";
+
 export default function VaultInfo() {
   const [activeVaultIndex, setActiveVaultIndex] = useState(0);
 
