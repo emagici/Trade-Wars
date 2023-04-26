@@ -119,6 +119,7 @@ const GameList = ({ onClickVault }: Props) => {
             color: "#BAA67E",
             fontFamily: "Zen Dots, sans-serif",
             backgroundColor: "#211C16",
+            cursor: "pointer",
           },
         }}
       >
