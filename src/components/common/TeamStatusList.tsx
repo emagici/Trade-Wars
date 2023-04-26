@@ -73,21 +73,25 @@ const TeamStatusList = ({ onClickVault }: Props) => {
     setPage(0);
   };
   return (
-    <div className="hidden flex items-center md:flex flex-col font-semibold px-7.5 xl:px-20 pt-[68px] pb-15 xl:py-25">
-      <div className="flex items-center w-[1156px] border-[12px] border-gap">
+    <div className="hidden flex items-center md:flex flex-col font-semibold">
+      <div className="flex items-center w-[1156px] border-[12px] border-gap mt-[72px]">
         <TableContainer
           sx={{
-            maxHeight: 600,
+            maxHeight: 400,
             maxWidth: 1156,
             "& th": {
               color: "#E8E1D4",
               backgroundColor: "#43372C",
               fontFamily: "Zen Dots, sans-serif",
+              paddingX: "1rem",
+              paddingY: "0.5rem",
             },
             "& td": {
               color: "#BAA67E",
               fontFamily: "Zen Dots, sans-serif",
               backgroundColor: "#211C16",
+              paddingX: "1rem",
+              paddingY: "0.5rem",
             },
           }}
         >
@@ -117,7 +121,12 @@ const TeamStatusList = ({ onClickVault }: Props) => {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, idx) => {
                   return (
-                    <TableRow hover tabIndex={-1} key={idx}>
+                    <TableRow
+                      hover
+                      tabIndex={-1}
+                      key={idx}
+                      sx={{ maxHeight: "50px" }}
+                    >
                       <TableCell key="game" align="left">
                         <div className="w-100 h-100 flex flex-row align-center">
                           <Image

@@ -6,7 +6,7 @@ export default function GameStatus() {
 
   return (
     <div className="flex flex-col tracking-wide aspect-[1930/1080] h-[calc(100vh-144px)] bg-trader bg-cover">
-      <div className="md:flex justify-start items-center flex-col px-7.5 xl:px-20 py-10">
+      <div className="md:flex justify-start items-center flex-col mt-10">
         <span
           className="text-[24px] text-stepTitle font-Zen  bg-transparent w-100"
           style={{
@@ -24,11 +24,12 @@ export default function GameStatus() {
         >
           168H : 23M: 50S
         </span>
-        <span className="text-base text-step font-Poppins drop-shadow-md	 bg-transparent">
+        <span className="text-base text-step font-Poppins drop-shadow-mdbg-transparent">
           In around 7 days
         </span>
       </div>
-      <div className="md:flex justify-start items-center flex-col">
+
+      <div className="md:flex justify-start items-center flex-col mt-16">
         <span className="text-base text-step font-Zen  bg-transparent w-100">
           Winning amount
         </span>

@@ -91,7 +91,7 @@ const rows = [
 ];
 const GameList = ({ onClickVault }: Props) => {
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(8);
   const router = useRouter();
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -114,12 +114,16 @@ const GameList = ({ onClickVault }: Props) => {
             color: "#E8E1D4",
             backgroundColor: "#43372C",
             fontFamily: "Zen Dots, sans-serif",
+            paddingX: "1rem",
+            paddingY: "0.5rem",
           },
           "& td": {
             color: "#BAA67E",
             fontFamily: "Zen Dots, sans-serif",
             backgroundColor: "#211C16",
             cursor: "pointer",
+            paddingX: "1rem",
+            paddingY: "0.5rem",
           },
         }}
       >
