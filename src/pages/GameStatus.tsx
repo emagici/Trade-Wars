@@ -5,7 +5,7 @@ export default function GameStatus() {
   const [activeVaultIndex, setActiveVaultIndex] = useState(0);
 
   return (
-    <div className="flex flex-col tracking-wide aspect-[1930/1080] h-[calc(100vh-144px)] bg-trader bg-cover">
+    <div className="flex flex-col tracking-wide aspect-[1930/1080] bg-trader bg-cover">
       <div className="md:flex justify-start items-center flex-col mt-10">
         <span
           className="text-[24px] text-stepTitle font-Zen  bg-transparent w-100"
