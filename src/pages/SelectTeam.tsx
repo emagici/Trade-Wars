@@ -2,7 +2,6 @@ import TeamList from "@/components/common/TeamList";
 import { useState } from "react";
 
 export default function SelectTeam() {
-  const [activeVaultIndex, setActiveVaultIndex] = useState(0);
   const [winWager, setWinwager] = useState(0);
   return (
     <div className="flex flex-col tracking-wide aspect-[1930/1080] bg-trader bg-cover">
@@ -71,8 +70,7 @@ export default function SelectTeam() {
         </span>
       </div>
       <TeamList
-        onClickVault={(index) => {
-          setActiveVaultIndex(index);
+        onClickVault={() => {
           setWinwager(100.55);
         }}
       />

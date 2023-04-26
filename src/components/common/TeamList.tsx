@@ -13,7 +13,7 @@ import { useState } from "react";
 import JoinGameBtn from "./JoinGameBtn";
 
 type Props = {
-  onClickVault: (index: number) => void;
+  onClickVault: () => void;
 };
 interface Column {
   id: "team" | "players";
@@ -124,7 +124,7 @@ const TeamList = ({ onClickVault }: Props) => {
                     tabIndex={idx}
                     key={idx}
                     onClick={() => {
-                      setSelectedTeam(row["team"], onClickVault(idx));
+                      setSelectedTeam(row["team"]), onClickVault();
                     }}
                     style={{
                       backgroundColor:
