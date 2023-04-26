@@ -38,6 +38,7 @@ module.exports = {
         loseId: "rgba(51, 65, 69, 1)",
         btnText: "rgba(210, 213, 217, 1)",
         completed: "rgba(134, 110, 87, 1)",
+        disable: "rgba(59,63,63,1)",
       },
       fontSize: {
         "1.5xl": "22px",

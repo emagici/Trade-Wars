@@ -1,4 +1,3 @@
-import vaults from "@/constants/vaults";
 import { Vault } from "@/types/vault";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -8,7 +7,9 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { useState } from "react";
+
 import JoinGameBtn from "./JoinGameBtn";
 
 type Props = {
@@ -82,10 +83,16 @@ const rows = [
   createData("Game10", 0, "04 Apr - 11 Apr", 50.25, 5, 0),
   createData("Game11", 0, "04 Apr - 11 Apr", 50.25, 5, 0),
   createData("Game12", 0, "04 Apr - 11 Apr", 50.25, 5, 0),
+  createData("Game8", 0, "04 Apr - 11 Apr", 50.25, 5, 0),
+  createData("Game9", 0, "04 Apr - 11 Apr", 50.25, 5, 0),
+  createData("Game10", 0, "04 Apr - 11 Apr", 50.25, 5, 0),
+  createData("Game11", 0, "04 Apr - 11 Apr", 50.25, 5, 0),
+  createData("Game12", 0, "04 Apr - 11 Apr", 50.25, 5, 0),
 ];
 const GameList = ({ onClickVault }: Props) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const router = useRouter();
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -98,7 +105,7 @@ const GameList = ({ onClickVault }: Props) => {
     setPage(0);
   };
   return (
-    <div className="hidden flex items-center md:flex flex-col font-semibold px-7.5 xl:px-20 pt-[68px] pb-15 xl:py-25">
+    <div className="hidden flex items-center md:flex flex-col font-semibold mt-10">
       <TableContainer
         sx={{
           maxWidth: 1080,
@@ -142,7 +149,11 @@ const GameList = ({ onClickVault }: Props) => {
               .map((row, idx) => {
                 return (
                   <TableRow hover tabIndex={-1} key={idx}>
-                    <TableCell key="game" align="left">
+                    <TableCell
+                      key="game"
+                      align="left"
+                      onClick={() => router.push("/GameStatus")}
+                    >
                       <div className="w-100 h-100 flex flex-row align-center">
                         <Image
                           src="/assets/icons/user.png"
@@ -154,7 +165,11 @@ const GameList = ({ onClickVault }: Props) => {
                         <span className="leading-[32px]">{row["game"]}</span>
                       </div>
                     </TableCell>
-                    <TableCell key="status" align="left">
+                    <TableCell
+                      key="status"
+                      align="left"
+                      onClick={() => router.push("/GameStatus")}
+                    >
                       {row["status"] == 0 ? (
                         <div className="flex flex-row items-center">
                           <Image
@@ -190,13 +205,25 @@ const GameList = ({ onClickVault }: Props) => {
                         </div>
                       )}
                     </TableCell>
-                    <TableCell key="duration" align="left">
+                    <TableCell
+                      key="duration"
+                      align="left"
+                      onClick={() => router.push("/GameStatus")}
+                    >
                       {row["duration"]}
                     </TableCell>
-                    <TableCell key="wager" align="left">
+                    <TableCell
+                      key="wager"
+                      align="left"
+                      onClick={() => router.push("/GameStatus")}
+                    >
                       ETH {row["wager"]}
                     </TableCell>
-                    <TableCell key="players" align="left">
+                    <TableCell
+                      key="players"
+                      align="left"
+                      onClick={() => router.push("/GameStatus")}
+                    >
                       {row["players"]}
                     </TableCell>
                     <TableCell key="joined" align="right">
@@ -222,7 +249,7 @@ const GameList = ({ onClickVault }: Props) => {
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
-        labelRowsPerPage={"Display Rows"}
+        labelRowsPerPage={""}
         labelDisplayedRows={({ page }) => {
           return `Page: ${page + 1} of ${Math.ceil(rows.length / rowsPerPage)}`;
         }}
@@ -230,18 +257,19 @@ const GameList = ({ onClickVault }: Props) => {
           backgroundColor: "transparent !important", // gets overridden if not important
           ".MuiInputBase-root": {
             backgroundColor: "transparent",
-            borderWidth: "1px",
+            borderWidth: "0px",
+            display: "none",
           },
           ".MuiTablePagination-toolbar": {
             backgroundColor: "transparent",
             color: "#B9A18A",
           },
           ".MuiBox-root": {
-            backgroundColor: "yellow",
+            backgroundColor: "red",
             color: "#B9A18A",
 
             "& .MuiSvgIcon-root": {
-              backgroundColor: "transparent",
+              backgroundColor: "trarnsparent",
               color: "#B9A18A",
             },
           },

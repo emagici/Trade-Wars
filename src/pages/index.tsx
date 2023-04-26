@@ -8,7 +8,7 @@ export default function VaultInfo() {
   const [activeVaultIndex, setActiveVaultIndex] = useState(0);
 
   return (
-    <div className="flex flex-col tracking-wide aspect-[1930/1080] bg-trader bg-cover">
+    <div className="flex flex-col tracking-wide aspect-[1930/1080] h-[calc(100vh-144px)] content-container bg-trader bg-cover">
       <div className="md:flex justify-start items-center	flex-col px-7.5 xl:px-20 py-7.5 xl:py-16 gap-2.5 xl:gap-3.5 text-light">
         <span
           className="text-3.5xl text-yellow font-Zen drop-shadow-title bg-transparent"

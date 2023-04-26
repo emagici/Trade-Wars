@@ -10,7 +10,7 @@ export default function JoinGame() {
   const [activeVaultIndex, setActiveVaultIndex] = useState(0);
 
   return (
-    <div className="flex flex-col tracking-wide aspect-[1930/1080] bg-trader bg-cover mt-[32px]">
+    <div className="flex flex-col tracking-wide aspect-[1930/1080] h-[calc(100vh-144px)] bg-trader bg-cover">
       <div className="flex justify-center items-center flex-row mt-2">
         <div className="flex flex-col justify-center items-center mr-4">
           <div className="flex justify-center items-center w-[41px] h-[41px] font-Zen text-base bg-step rounded-full text-black">

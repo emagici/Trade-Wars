@@ -6,8 +6,8 @@ export default function GameResult() {
   const [activeVaultIndex, setActiveVaultIndex] = useState(0);
 
   return (
-    <div className="flex items-center flex-col tracking-wide aspect-[1930/1080] bg-trader bg-cover mt-[32px]">
-      <div className="md:flex justify-start items-center flex-col px-7.5 xl:px-20 py-10">
+    <div className="flex items-center flex-col tracking-wide aspect-[1930/1080] h-[calc(100vh-144px)] bg-trader bg-cover">
+      <div className="md:flex justify-start items-center flex-col mt-[72px]">
         {/* <span className="text-[40px] text-stepTitle font-Zen  bg-transparent w-100">
           YOU WON!
         </span> */}

@@ -1,4 +1,3 @@
-import vaults from "@/constants/vaults";
 import { Vault } from "@/types/vault";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -14,7 +13,7 @@ import { useState } from "react";
 import JoinGameBtn from "./JoinGameBtn";
 
 type Props = {
-  onClickVault: (vault: Vault, index: number) => void;
+  onClickVault: (index: number) => void;
 };
 interface Column {
   id: "team" | "players";
@@ -49,21 +48,30 @@ const rows = [
   createData("Team8", 15),
   createData("Team9", 1),
   createData("Team10", 10),
+  createData("Team11", 15),
+  createData("Team12", 1),
+  createData("Team13", 10),
+  createData("Team14", 15),
+  createData("Team15", 1),
+  createData("Team16", 10),
+  createData("Team17", 15),
+  createData("Team18", 1),
+  createData("Team19", 10),
 ];
 const TeamList = ({ onClickVault }: Props) => {
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(8);
   const [selectedTeam, setSelectedTeam] = useState("");
-  const [isDeposit, setDepositFlag] = useState(false);
+  const [isDeposited, setDeposit] = useState(false);
   const router = useRouter();
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
   const handleConnect = () => {
-    setDepositFlag(true);
+    console.log("abc");
   };
   const handleDeposit = () => {
-    router.push("/GameStatus");
+    setDeposit(true);
   };
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -72,7 +80,7 @@ const TeamList = ({ onClickVault }: Props) => {
     setPage(0);
   };
   return (
-    <div className="hidden flex items-center justify-center md:flex flex-col font-semibold px-7.5 xl:px-20 pt-[68px] pb-15 xl:py-25">
+    <div className="hidden flex items-center justify-center md:flex flex-col font-semibold px-7.5 xl:px-20 pb-15">
       <div className="font-Zen text-base text-step w-[600px] ">
         {selectedTeam == "" ? "Select Team" : selectedTeam + " selected"}
       </div>
@@ -89,6 +97,11 @@ const TeamList = ({ onClickVault }: Props) => {
           "& td": {
             color: "#BAA67E",
             fontFamily: "Zen Dots, sans-serif",
+            cursor: "",
+            // backgroundColor: "#211C16",
+          },
+          "& td:hover": {
+            cursor: "pointer",
             // backgroundColor: "#211C16",
           },
         }}
@@ -110,7 +123,9 @@ const TeamList = ({ onClickVault }: Props) => {
                     hover
                     tabIndex={idx}
                     key={idx}
-                    onClick={() => !isDeposit && setSelectedTeam(row["team"])}
+                    onClick={() => {
+                      setSelectedTeam(row["team"], onClickVault(idx));
+                    }}
                     style={{
                       backgroundColor:
                         selectedTeam === row["team"] ? "#111617" : "#211C16",
@@ -138,14 +153,14 @@ const TeamList = ({ onClickVault }: Props) => {
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[3, 5, 10]}
+        // rowsPerPageOptions={[3, 5, 10]}
         component="div"
         count={rows.length}
-        rowsPerPage={rowsPerPage}
+        rowsPerPage={8}
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
-        labelRowsPerPage={"Display Rows"}
+        labelRowsPerPage={""}
         labelDisplayedRows={({ page }) => {
           return `Page: ${page + 1} of ${Math.ceil(rows.length / rowsPerPage)}`;
         }}
@@ -154,7 +169,8 @@ const TeamList = ({ onClickVault }: Props) => {
 
           ".MuiInputBase-root": {
             backgroundColor: "transparent",
-            borderWidth: "1px",
+            borderWidth: "0px",
+            display: "none",
           },
           ".MuiTablePagination-toolbar": {
             backgroundColor: "transparent",
@@ -163,6 +179,7 @@ const TeamList = ({ onClickVault }: Props) => {
           ".MuiBox-root": {
             backgroundColor: "yellow",
             color: "#B9A18A",
+            display: "hidden",
 
             "& .MuiSvgIcon-root": {
               backgroundColor: "transparent",
@@ -171,33 +188,30 @@ const TeamList = ({ onClickVault }: Props) => {
           },
         }}
       />
-      {!isDeposit && (
+      <div className="flex flex-row item-center mt-[50px]">
         <button
-          className="rounded w-[124px] h-[50px] px-4 py-1 bg-tableHeader z-50 drop-shadow-join  mt-[50px]"
+          className={`rounded w-[222px] h-[50px] px-4 py-1 ${
+            selectedTeam === "" ? "bg-disable" : "bg-btn"
+          } ${
+            selectedTeam === "" ? "cursor-not-allowed	" : "cursor-default	"
+          } bg-btn z-50 drop-shadow-join`}
+          disabled={selectedTeam == ""}
+          onClick={handleDeposit}
+        >
+          <span className="text-base font-Zen text-header">Enter Wager</span>
+        </button>
+        <button
+          className={`rounded w-[172px] h-[50px] px-4 py-1 z-50 drop-shadow-join ml-[16px] ${
+            !isDeposited ? "bg-disable" : "bg-btn"
+          } ${
+            !isDeposited ? "cursor-not-allowed	" : "cursor-default	"
+          } bg-btn z-50 drop-shadow-join`}
           disabled={selectedTeam == ""}
           onClick={handleConnect}
         >
-          <span className="text-[12px] font-Zen text-btnText">Next</span>
+          <span className="text-base font-Zen text-header">Withdraw</span>
         </button>
-      )}
-      {isDeposit && (
-        <div className="flex flex-row item-center mt-[50px]">
-          <button
-            className="rounded w-[222px] h-[50px] px-4 py-1 bg-btn z-50 drop-shadow-join"
-            disabled={selectedTeam == ""}
-            onClick={handleDeposit}
-          >
-            <span className="text-base font-Zen text-header">Enter Wager</span>
-          </button>
-          <button
-            className="rounded w-[172px] h-[50px] px-4 py-1 z-50 drop-shadow-join ml-[16px] bg-btn"
-            disabled={selectedTeam == ""}
-            onClick={handleConnect}
-          >
-            <span className="text-base font-Zen text-header">Withdraw</span>
-          </button>
-        </div>
-      )}
+      </div>
     </div>
   );
 };
