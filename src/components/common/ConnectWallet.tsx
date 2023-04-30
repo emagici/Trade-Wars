@@ -1,6 +1,6 @@
+import { useNotification, useWallet } from "@/hooks";
+import { checkIfBlocked, shortAddress } from "@/utils";
 import Image from "next/image";
-import { useWallet, useNotification } from "@/hooks";
-import { shortAddress, checkIfBlocked } from "@/utils";
 import { useEffect, useState } from "react";
 
 const ConnectWallet = () => {
@@ -13,25 +13,8 @@ const ConnectWallet = () => {
     checkIfBlocked().then(setBlockedRegion);
   }, []);
 
-  const handleMouseEnter = () => {
-    if (blockedRegion) {
-      showNotification(
-        `You are accessing this website from ${blockedRegion}.`,
-        "The following countries are geo-blocked: United States, Canada, North Korea, Syria, Iran, Cuba, and Russia."
-      );
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (blockedRegion) {
-      hideNotification();
-    }
-  };
-
   const handleConnect = async () => {
-    if (!blockedRegion) {
-      await connect();
-    }
+    await connect();
   };
 
   return (
@@ -52,8 +35,6 @@ const ConnectWallet = () => {
         <button
           className="text-yellow rounded px-4 py-1 bg-btn"
           onClick={handleConnect}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
         >
           <span className="text-xs font-Zen text-header">CONNECT WALLET</span>
         </button>
