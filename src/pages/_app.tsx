@@ -1,12 +1,14 @@
 import "@/styles/globals.scss";
+
 import type { AppProps } from "next/app";
 import { Header, Footer } from "@/components";
 import WalletProvider from "@/contexts/WalletContext";
-import NotificationProvider from "@/contexts/NotificationContext";
+import { Provider } from "react-redux";
+import store from "../state";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <NotificationProvider>
+    <Provider store={store}>
       <WalletProvider>
         <div className="flex flex-col h-full w-full relative main bg-gap">
           <Header />
@@ -14,6 +16,6 @@ export default function App({ Component, pageProps }: AppProps) {
           <Footer />
         </div>
       </WalletProvider>
-    </NotificationProvider>
+    </Provider>
   );
 }
