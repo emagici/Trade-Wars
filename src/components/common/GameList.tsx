@@ -9,8 +9,11 @@ import TableRow from "@mui/material/TableRow";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useState } from "react";
-
 import JoinGameBtn from "./JoinGameBtn";
+import { fetchGameInfo } from "@/state/game/fetchGames";
+import { useDispatch } from "react-redux";
+import { useWallet } from "@/hooks";
+import { useEffect } from "react";
 
 type Props = {
   onClickVault: (vault: Vault, index: number) => void;
@@ -93,7 +96,10 @@ const GameList = ({ onClickVault }: Props) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(8);
   const router = useRouter();
-
+  const dispatch = useDispatch();
+  const { connect, provider, account } = useWallet();
+  console.log(provider);
+  // console.log("abc", data);
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -104,6 +110,15 @@ const GameList = ({ onClickVault }: Props) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+  // useEffect(() => {
+  //     dispatch(
+  //       fetchGameInfo(
+  //         provider,
+  //         account
+  //       )
+  //     );
+  //   }
+  // }, []);
   return (
     <div className="hidden flex items-center md:flex flex-col font-semibold mt-10">
       <TableContainer

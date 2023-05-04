@@ -1,4 +1,3 @@
-import vaults from "@/constants/vaults";
 import { Vault } from "@/types/vault";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";

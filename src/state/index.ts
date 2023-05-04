@@ -1,12 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 
-// import bondReducer from "./bond";
-// import farmsReducer from "./farms";
-// import jungleFarmsReducer from "./jungleFarms";
+import gameReducer from "./game";
 
 const store = configureStore({
-  reducer: {},
+  reducer: { game: gameReducer },
 });
 
 export type AppDispatch = typeof store.dispatch;

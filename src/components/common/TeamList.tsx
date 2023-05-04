@@ -10,8 +10,6 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
-import JoinGameBtn from "./JoinGameBtn";
-
 type Props = {
   onClickVault: () => void;
 };

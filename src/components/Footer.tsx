@@ -1,4 +1,3 @@
-import { ConnectWallet, VaultSearch } from "@/components/common";
 import { NavOption } from "@/types/common";
 import Image from "next/image";
 import Link from "next/link";

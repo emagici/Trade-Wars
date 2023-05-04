@@ -1,0 +1,1 @@
+export { fetchPublicDataAsync } from "./game";

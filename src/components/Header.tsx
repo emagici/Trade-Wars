@@ -1,14 +1,8 @@
-import { ConnectWallet, VaultSearch } from "@/components/common";
+import { ConnectWallet } from "@/components/common";
 import { NavOption } from "@/types/common";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-
-const NAV_OPTIONS: NavOption[] = [
-  { href: "/", name: "Vaults" },
-  { href: "/portfolio", name: "Portfolio" },
-  { href: "/prologue-nfts", name: "Prologue NFTs" },
-];
 
 const Header = () => {
   const router = useRouter();
