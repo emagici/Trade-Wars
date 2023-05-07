@@ -1,4 +1,5 @@
-import { Vault } from "@/types/vault";
+import { useWallet } from "@/hooks";
+import { useFetchPublicData, useGame } from "@/state/hook";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -6,17 +7,15 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
+import { ethers } from "ethers";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
 import JoinGameBtn from "./JoinGameBtn";
-import { fetchGameInfo } from "@/state/game/fetchGames";
-import { useDispatch } from "react-redux";
-import { useWallet } from "@/hooks";
-import { useEffect } from "react";
 
 type Props = {
-  onClickVault: (vault: Vault, index: number) => void;
+  onClickVault: (index: number) => void;
 };
 interface Column {
   id: "game" | "status" | "duration" | "wager" | "players" | "joined";
@@ -57,7 +56,7 @@ interface Data {
   game: string;
   status: number;
   duration: string;
-  wager: number;
+  wager: string;
   players: number;
   joined: number;
 }
@@ -66,59 +65,109 @@ function createData(
   game: string,
   status: number,
   duration: string,
-  wager: number,
+  wager: string,
   players: number,
   joined: number
 ): Data {
   return { game, status, duration, wager, players, joined };
 }
-const gameStatus = ["Join", "Joined", "Not Joined", "Won", "Lost"];
-const rows = [
-  createData("Game1", 0, "04 Apr - 11 Apr", 50.25, 5, 0),
-  createData("Game2", 1, "04 Apr - 11 Apr", 50.25, 5, 0),
-  createData("Game3", 2, "04 Apr - 11 Apr", 50.25, 5, 0),
-  createData("Game4", 0, "04 Apr - 11 Apr", 50.25, 5, 0),
-  createData("Game5", 1, "04 Apr - 11 Apr", 50.25, 5, 0),
-  createData("Game6", 2, "04 Apr - 11 Apr", 50.25, 5, 0),
-  createData("Game7", 0, "04 Apr - 11 Apr", 50.25, 5, 0),
-  createData("Game8", 0, "04 Apr - 11 Apr", 50.25, 5, 0),
-  createData("Game9", 0, "04 Apr - 11 Apr", 50.25, 5, 0),
-  createData("Game10", 0, "04 Apr - 11 Apr", 50.25, 5, 0),
-  createData("Game11", 0, "04 Apr - 11 Apr", 50.25, 5, 0),
-  createData("Game12", 0, "04 Apr - 11 Apr", 50.25, 5, 0),
-  createData("Game8", 0, "04 Apr - 11 Apr", 50.25, 5, 0),
-  createData("Game9", 0, "04 Apr - 11 Apr", 50.25, 5, 0),
-  createData("Game10", 0, "04 Apr - 11 Apr", 50.25, 5, 0),
-  createData("Game11", 0, "04 Apr - 11 Apr", 50.25, 5, 0),
-  createData("Game12", 0, "04 Apr - 11 Apr", 50.25, 5, 0),
+const userStatus = ["Join", "Joined", "Not Joined", "Won", "Lost"];
+const gameStatus = [
+  "Not_Created",
+  "Pre-Start",
+  "In-progress",
+  "Cancelled",
+  "Completed",
 ];
+
 const GameList = ({ onClickVault }: Props) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(8);
+  const [rows, setRowsData] = useState([]);
   const router = useRouter();
-  const dispatch = useDispatch();
+  useFetchPublicData();
+  const gameInfo = useGame();
   const { connect, provider, account } = useWallet();
-  console.log(provider);
-  // console.log("abc", data);
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
-
+  console.log(gameInfo);
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-  // useEffect(() => {
-  //     dispatch(
-  //       fetchGameInfo(
-  //         provider,
-  //         account
-  //       )
-  //     );
-  //   }
-  // }, []);
+  const handlePage = (status: number, idx: number) => {
+    if (status === 1) {
+      router.push({
+        pathname: "/SelectTeam",
+        query: {
+          gid: idx,
+        },
+      });
+    } else if (status === 2) {
+      router.push({
+        pathname: "/GameStatus",
+        query: {
+          gid: idx,
+        },
+      });
+    } else if (status === 4) {
+      const winID = gameInfo.games[idx].winningTeam;
+      const result = gameInfo.data[idx].teams[winID - 1].some((row) =>
+        row.includes(account)
+      );
+      router.push({
+        pathname: "/GameResult",
+        query: {
+          result: result ? "win" : "lose",
+        },
+      });
+    }
+  };
+  const handleUserStatus = (status: number, idx: number) => {
+    if (status === 1 || account === undefined) {
+      return 0;
+    } else if (status === 2) {
+      if (gameInfo.data[idx].teams.some((row) => row.includes(account))) {
+        return 1;
+      } else return 2;
+    } else if (status === 4) {
+      const winID = gameInfo.games[idx].winningTeam;
+      if (
+        gameInfo.data[idx].teams[winID - 1].some((row) => row.includes(account))
+      ) {
+        return 3;
+      } else return 4;
+      // gameInfo.games[idx]
+    } else return 5;
+  };
+  useEffect(() => {
+    var rowData: any[] = [];
+    if (gameInfo.data.length > 0) {
+      gameInfo.data.map((item: any, idx: number) => {
+        const wager = item.wage.toString();
+        const ethValue = ethers.utils.formatEther(wager);
+
+        var totalPlayer = 0;
+        item.teams.map((team: any) => {
+          totalPlayer += team.length;
+        });
+        rowData.push(
+          createData(
+            "Game" + (idx + 1),
+            item.status,
+            "04 Apr - 11 Apr",
+            ethValue,
+            totalPlayer,
+            0
+          )
+        );
+      });
+      setRowsData(rowData);
+    }
+  }, [gameInfo]);
   return (
     <div className="hidden flex items-center md:flex flex-col font-semibold mt-10">
       <TableContainer
@@ -168,7 +217,9 @@ const GameList = ({ onClickVault }: Props) => {
                     <TableCell
                       key="game"
                       align="left"
-                      onClick={() => router.push("/GameStatus")}
+                      onClick={() =>
+                        handlePage(row["status"], page * rowsPerPage + idx)
+                      }
                     >
                       <div className="w-100 h-100 flex flex-row align-center">
                         <Image
@@ -184,9 +235,11 @@ const GameList = ({ onClickVault }: Props) => {
                     <TableCell
                       key="status"
                       align="left"
-                      onClick={() => router.push("/GameStatus")}
+                      onClick={() =>
+                        handlePage(row["status"], page * rowsPerPage + idx)
+                      }
                     >
-                      {row["status"] == 0 ? (
+                      {row["status"] == 1 ? (
                         <div className="flex flex-row items-center">
                           <Image
                             src="/assets/icons/p1.png"
@@ -197,7 +250,7 @@ const GameList = ({ onClickVault }: Props) => {
                           />
                           Pre-Start
                         </div>
-                      ) : row["status"] == 1 ? (
+                      ) : row["status"] == 2 ? (
                         <div className="flex flex-row items-center text-stepTitle">
                           <Image
                             src="/assets/icons/p2.png"
@@ -208,7 +261,7 @@ const GameList = ({ onClickVault }: Props) => {
                           />
                           In-progress
                         </div>
-                      ) : (
+                      ) : row["status"] == 4 ? (
                         <div className="flex flex-row items-center text-completed">
                           <Image
                             src="/assets/icons/p3.png"
@@ -219,36 +272,74 @@ const GameList = ({ onClickVault }: Props) => {
                           />
                           Completed
                         </div>
+                      ) : (
+                        <div className="flex flex-row items-center text-completed">
+                          <Image
+                            src="/assets/icons/p3.png"
+                            width={10}
+                            height={10}
+                            className="mr-[4px]"
+                            alt="p3"
+                          />
+                          Cancelled
+                        </div>
                       )}
                     </TableCell>
                     <TableCell
                       key="duration"
                       align="left"
-                      onClick={() => router.push("/GameStatus")}
+                      onClick={() =>
+                        handlePage(row["status"], page * rowsPerPage + idx)
+                      }
                     >
                       {row["duration"]}
                     </TableCell>
                     <TableCell
                       key="wager"
                       align="left"
-                      onClick={() => router.push("/GameStatus")}
+                      onClick={() =>
+                        handlePage(row["status"], page * rowsPerPage + idx)
+                      }
                     >
                       ETH {row["wager"]}
                     </TableCell>
                     <TableCell
                       key="players"
                       align="left"
-                      onClick={() => router.push("/GameStatus")}
+                      onClick={() =>
+                        handlePage(row["status"], page * rowsPerPage + idx)
+                      }
                     >
                       {row["players"]}
                     </TableCell>
                     <TableCell key="joined" align="right">
-                      {row["joined"] == 0 ? (
-                        <JoinGameBtn />
-                      ) : row["joined"] == 1 ? (
-                        "Not Joined"
+                      {handleUserStatus(
+                        row["status"],
+                        page * rowsPerPage + idx
+                      ) == 0 ? (
+                        <JoinGameBtn gameID={page * rowsPerPage + idx} />
+                      ) : handleUserStatus(
+                          row["status"],
+                          page * rowsPerPage + idx
+                        ) == 1 ? (
+                        <span className="text-joined">Joined</span>
+                      ) : handleUserStatus(
+                          row["status"],
+                          page * rowsPerPage + idx
+                        ) == 2 ? (
+                        <span className="text-btn">Not Joined</span>
+                      ) : handleUserStatus(
+                          row["status"],
+                          page * rowsPerPage + idx
+                        ) == 3 ? (
+                        <span className="text-lose">Won</span>
+                      ) : handleUserStatus(
+                          row["status"],
+                          page * rowsPerPage + idx
+                        ) == 4 ? (
+                        <span className="text-btn">Lost</span>
                       ) : (
-                        "Joined"
+                        <span className="text-btn">Cancelled</span>
                       )}
                     </TableCell>
                   </TableRow>
@@ -285,7 +376,7 @@ const GameList = ({ onClickVault }: Props) => {
             color: "#B9A18A",
 
             "& .MuiSvgIcon-root": {
-              backgroundColor: "trarnsparent",
+              backgroundColor: "transparent",
               color: "#B9A18A",
             },
           },

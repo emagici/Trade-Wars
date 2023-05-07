@@ -1,15 +1,20 @@
-import { getMulticallAddress } from "./addressHelpers";
-import { ethers } from "ethers";
+import { useWallet } from "@/hooks";
+import Web3 from "web3";
+
 // import { AbiItem } from "./ABI";
 // Addresses
 import MultiCallAbi from "./abis/multicall.json";
+import { getMulticallAddress } from "./addressHelpers";
 
 // eslint-disable-next-line consistent-return
-const getContract = (abi: any, address: string, web3Provider: string) => {
-  //   const currentWeb3 = new Web3(web3Provider);
-  return new ethers.Contract(abi, address);
+const getContract = (abi: any, address: string) => {
+  const currentWeb3 = new Web3(
+    "https://arb-goerli.g.alchemy.com/v2/OO-QwEAitxz54pj8eI5jMld-Zg7-GXKj"
+  );
+  return new currentWeb3.eth.Contract(abi, address);
 };
 
-const getMulticallContract = (web3Provider: string) =>
-  getContract(MultiCallAbi, getMulticallAddress(), web3Provider);
+const getMulticallContract = () => {
+  getContract(MultiCallAbi, getMulticallAddress());
+};
 export default getMulticallContract;

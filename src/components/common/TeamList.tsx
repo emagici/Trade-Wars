@@ -1,3 +1,6 @@
+import { useWallet } from "@/hooks";
+import { useGame } from "@/state/hook";
+import { useFetchPublicData } from "@/state/hook";
 import { Vault } from "@/types/vault";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -6,9 +9,18 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
+import { ethers } from "ethers";
+import {
+  Contract,
+  ContractCall,
+  Provider,
+  setMulticallAddress,
+} from "ethers-multicall";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+import TradeWarsJson from "../../utils/abis/TradeWars.json";
 
 type Props = {
   onClickVault: () => void;
@@ -35,41 +47,50 @@ function createData(team: string, players: number): Data {
   return { team, players };
 }
 
-const rows = [
-  createData("Team1", 10),
-  createData("Team2", 11),
-  createData("Team3", 12),
-  createData("Team4", 13),
-  createData("Team5", 11),
-  createData("Team6", 1),
-  createData("Team7", 13),
-  createData("Team8", 15),
-  createData("Team9", 1),
-  createData("Team10", 10),
-  createData("Team11", 15),
-  createData("Team12", 1),
-  createData("Team13", 10),
-  createData("Team14", 15),
-  createData("Team15", 1),
-  createData("Team16", 10),
-  createData("Team17", 15),
-  createData("Team18", 1),
-  createData("Team19", 10),
-];
 const TeamList = ({ onClickVault }: Props) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(8);
   const [selectedTeam, setSelectedTeam] = useState("");
+  const [selectedID, setSelectedID] = useState(-1);
+  const { signer } = useWallet();
+
   const [isDeposited, setDeposit] = useState(false);
+  const [rows, setRowsData] = useState([]);
   const router = useRouter();
+  useFetchPublicData();
+  const gameInfo = useGame();
+
+  const joinGame = async () => {};
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
   const handleConnect = () => {
     console.log("abc");
   };
-  const handleDeposit = () => {
+  const handleDeposit = async () => {
+    console.log(signer);
+    const tradeContract = new ethers.Contract(
+      "0xd8b2b4F698C5ce283Cf9c96A7BAC58E19b98f9e1",
+      TradeWarsJson,
+      signer
+    );
+    const gid = Number(router.query.gid);
+    const wage = gameInfo.data[gid].wage;
+    const result = await tradeContract.joinGame(gid, selectedID, {
+      value: wage,
+    });
     setDeposit(true);
+  };
+  const handleWithdraw = async () => {
+    console.log(signer);
+    const tradeContract = new ethers.Contract(
+      "0xd8b2b4F698C5ce283Cf9c96A7BAC58E19b98f9e1",
+      TradeWarsJson,
+      signer
+    );
+    const gid = Number(router.query.gid);
+    const wage = gameInfo.data[gid].wage;
+    const result = await tradeContract.leaveGame(gid);
   };
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -77,6 +98,18 @@ const TeamList = ({ onClickVault }: Props) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+
+  useEffect(() => {
+    var rowData: any[] = [];
+    const gid = Number(router.query.gid);
+    if (gameInfo.data.length > 0) {
+      console.log(gameInfo.data[gid]);
+      gameInfo.data[gid].teams.map((item: any, idx: number) => {
+        rowData.push(createData("Team" + (idx + 1), item.length));
+      });
+      setRowsData(rowData);
+    }
+  }, [gameInfo]);
   return (
     <div className="hidden flex items-center justify-center md:flex flex-col font-semibold px-7.5 xl:px-20 pb-15">
       <div className="font-Zen text-base text-step w-[600px] ">
@@ -122,7 +155,9 @@ const TeamList = ({ onClickVault }: Props) => {
                     tabIndex={idx}
                     key={idx}
                     onClick={() => {
-                      setSelectedTeam(row["team"]), onClickVault();
+                      setSelectedTeam(row["team"]),
+                        onClickVault(),
+                        setSelectedID(page * rowsPerPage + idx + 1);
                     }}
                     style={{
                       backgroundColor:
@@ -205,7 +240,7 @@ const TeamList = ({ onClickVault }: Props) => {
             !isDeposited ? "cursor-not-allowed	" : "cursor-default	"
           } bg-btn z-50 drop-shadow-join`}
           disabled={selectedTeam == ""}
-          onClick={handleConnect}
+          onClick={handleWithdraw}
         >
           <span className="text-base font-Zen text-header">Withdraw</span>
         </button>

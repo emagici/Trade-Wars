@@ -1,12 +1,12 @@
-import { createContext, ReactNode, useEffect, useState } from "react";
 import { ethers, Signer } from "ethers";
+import { createContext, ReactNode, useEffect, useState } from "react";
 import Web3Modal from "web3modal";
 
 const providerOptions = {
   /* See Provider Options Section */
 };
 
-const DEFAULT_CHAIN_ID = 1;
+const DEFAULT_CHAIN_ID = 421613;
 
 interface WalletContextType {
   account: string | undefined;

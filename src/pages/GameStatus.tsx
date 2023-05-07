@@ -1,8 +1,15 @@
 import TeamStatusList from "@/components/common/TeamStatusList";
+import { useWallet } from "@/hooks";
+import { useFetchPublicData, useGame } from "@/state/hook";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 export default function GameStatus() {
   const [activeVaultIndex, setActiveVaultIndex] = useState(0);
+  const router = useRouter();
+  useFetchPublicData();
+  const gameInfo = useGame();
+  const { connect, provider, account } = useWallet();
 
   return (
     <div className="flex flex-col tracking-wide aspect-[1930/1080] bg-trader bg-cover">

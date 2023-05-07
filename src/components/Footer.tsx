@@ -40,7 +40,7 @@ const Footer = () => {
       </div>
 
       <div className="flex-1 flex justify-end">
-        <span className="text-xs text-footerYellow font-Zen">
+        <span className="text-xs text-footerYellow font-Poppins">
           {" "}
           All rights reserved 2023
         </span>

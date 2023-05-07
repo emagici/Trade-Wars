@@ -1,8 +1,25 @@
 import TeamList from "@/components/common/TeamList";
-import { useState } from "react";
+import { useFetchPublicData } from "@/state/hook";
+import { useGame } from "@/state/hook";
+import { ethers } from "ethers";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 export default function SelectTeam() {
   const [winWager, setWinwager] = useState(0);
+  const [wager, setGameWager] = useState("0");
+  const router = useRouter();
+  useFetchPublicData();
+  const gameInfo = useGame();
+  useEffect(() => {
+    var rowData: any[] = [];
+    const gid = Number(router.query.gid);
+    if (gameInfo.data.length > 0) {
+      console.log(gameInfo.data[gid]);
+      const wa = ethers.utils.formatEther(gameInfo.data[gid].wage);
+      setGameWager(wa);
+    }
+  }, [gameInfo]);
   return (
     <div className="flex flex-col tracking-wide aspect-[1930/1080] bg-trader bg-cover">
       <div className="flex justify-center items-center flex-row mt-2">
@@ -52,7 +69,7 @@ export default function SelectTeam() {
         </span>
 
         <span className="text-[24px] text-step font-Zen drop-shadow-md	 bg-transparent">
-          ETH 50.25
+          ETH {wager}
         </span>
       </div>
       <div className="md:flex justify-start items-center flex-col">

@@ -11,9 +11,11 @@ module.exports = {
       },
       colors: {
         win: "rgba(84, 64, 24, 1)",
+        joined: "rgba(209, 196, 169, 1)",
         lose: "rgba(153, 167, 171, 1)",
         gap: "rgba(17, 22, 23, 1)",
         yellow: "rgba(163, 137, 83, 1)",
+        titleYellow: "#BAA67E",
         footerYellow: "rgba(185, 161, 138, 1)",
         secondary: "#1E1E1E",
         gray: "#C7C7C7",

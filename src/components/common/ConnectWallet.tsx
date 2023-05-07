@@ -25,7 +25,7 @@ const ConnectWallet = () => {
         </div>
       ) : (
         <button
-          className="text-yellow rounded px-4 py-1 bg-btn"
+          className="text-yellow px-4 py-1 bg-btn hover:bg-yellow"
           onClick={handleConnect}
         >
           <span className="text-xs font-Zen text-header"> CONNECT WALLET</span>

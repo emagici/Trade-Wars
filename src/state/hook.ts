@@ -1,20 +1,18 @@
 import React, { useEffect } from "react";
-
-import { fetchPublicDataAsync } from "./actions";
 import { useDispatch, useSelector } from "react-redux";
-import useRefresh from "../hooks/useRefresh";
 
+import useRefresh from "../hooks/useRefresh";
+import { fetchPublicDataAsync } from "./actions";
 import { Game } from "./types";
+
 export const useGame = (): Game => {
-  const game = useSelector((state: any) => state.game.data);
+  const game = useSelector((state: any) => state.game);
   return game;
 };
-export const useFetchPublicData = (web3Provider: string, user: any) => {
+export const useFetchPublicData = () => {
   const dispatch = useDispatch();
   const { fastRefresh } = useRefresh();
   useEffect(() => {
-    // dispatch(fetchFarmsPublicDataAsync(web3Provider, chainId, user));
-    // dispatch(fetchJungleFarmsPublicDataAsync(web3Provider, chainId, user));
-    dispatch(fetchPublicDataAsync(web3Provider, user));
+    dispatch(fetchPublicDataAsync());
   }, [dispatch, fastRefresh]);
 };

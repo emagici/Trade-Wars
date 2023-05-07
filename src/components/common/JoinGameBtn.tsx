@@ -1,10 +1,20 @@
 import { useRouter } from "next/router";
+import React from "react";
 
-const JoinGameBtn = () => {
+type Props = {
+  gameID: number;
+};
+const JoinGameBtn = ({ gameID }: Props) => {
   const router = useRouter();
 
-  const handleConnect = async () => {
-    router.push("/SelectTeam");
+  const handleConnect = () => {
+    console.log(gameID);
+    router.push({
+      pathname: "/SelectTeam",
+      query: {
+        gid: gameID,
+      },
+    });
   };
 
   return (
