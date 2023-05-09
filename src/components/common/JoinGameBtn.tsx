@@ -19,7 +19,7 @@ const JoinGameBtn = ({ gameID }: Props) => {
 
   return (
     <button
-      className="rounded w-[70px] h-[25px] px-4 py-1 bg-tableHeader z-50 drop-shadow-join"
+      className="rounded w-[70px] h-[25px] px-4 py-1 bg-tableHeader hover:bg-yellow z-50 drop-shadow-join"
       onClick={handleConnect}
       style={{
         background:

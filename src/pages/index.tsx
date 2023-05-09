@@ -1,6 +1,4 @@
 import JumpBtn from "@/components/common/JumpBtn";
-import { News } from "@/components/vaults";
-import { Vault } from "@/types/vault";
 import Image from "next/image";
 import { useState } from "react";
 

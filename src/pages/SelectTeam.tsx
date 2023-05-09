@@ -14,8 +14,8 @@ export default function SelectTeam() {
   useEffect(() => {
     var rowData: any[] = [];
     const gid = Number(router.query.gid);
-    if (gameInfo.data.length > 0) {
-      console.log(gameInfo.data[gid]);
+    if (gameInfo.data !== undefined && gameInfo.data.length > 0) {
+      // @ts-ignore: Object is possibly 'null'.
       const wa = ethers.utils.formatEther(gameInfo.data[gid].wage);
       setGameWager(wa);
     }

@@ -1,3 +1,5 @@
+import { useWallet } from "@/hooks";
+import { useFetchPublicData, useGame } from "@/state/hook";
 import { Vault } from "@/types/vault";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -6,10 +8,12 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
+import { ethers } from "ethers";
 import Image from "next/image";
-import { useState } from "react";
-
-import JoinGameBtn from "./JoinGameBtn";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { convertToObject } from "typescript";
+import Web3 from "web3";
 
 type Props = {
   onClickVault: (vault: Vault, index: number) => void;
@@ -39,31 +43,25 @@ const columns: Column[] = [
 
 interface Data {
   team: string;
-  wager: number;
   players: number;
+  wager: number;
 }
 
-function createData(team: string, wager: number, players: number): Data {
-  return { team, wager, players };
+function createData(team: string, players: number, wager: number): Data {
+  return { team, players, wager };
 }
 
-const rows = [
-  createData("Game1", 50.25, 1),
-  createData("Game2", 51.25, 3),
-  createData("Game3", 52.25, 5),
-  createData("Game4", 53.25, 3),
-  createData("Game5", 50.25, 4),
-  createData("Game6", 50.25, 5),
-  createData("Game7", 54.25, 6),
-  createData("Game9", 55.25, 7),
-];
 const TeamStatusList = ({ onClickVault }: Props) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
+  const [rows, setRowsData] = useState([]);
+  const { provider } = useWallet();
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
+  const router = useRouter();
+  useFetchPublicData();
+  const gameInfo = useGame();
 
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -71,6 +69,24 @@ const TeamStatusList = ({ onClickVault }: Props) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+  useEffect(() => {
+    var rowData: any[] = [];
+    const gid = Number(router.query.gid);
+    const web3 = new Web3(
+      "https://arb-goerli.g.alchemy.com/v2/OO-QwEAitxz54pj8eI5jMld-Zg7-GXKj"
+    );
+    if (gameInfo.data!.length > 0) {
+      var sum = ethers.BigNumber.from("0");
+      gameInfo.data![gid].teams!.map((item: any, idx: number) => {
+        item.map(async (address: string) => {
+          const bal = await provider?.getBalance(address);
+        });
+        rowData.push(createData("Team" + (idx + 1), item.length, 0));
+      });
+      // @ts-ignore: Object is possibly 'null'.
+      setRowsData(rowData);
+    }
+  }, [gameInfo]);
   return (
     <div className="hidden flex items-center md:flex flex-col font-semibold">
       <div className="flex items-center w-[1156px] border-[12px] border-gap mt-[72px]">

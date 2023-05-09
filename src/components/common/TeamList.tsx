@@ -60,7 +60,6 @@ const TeamList = ({ onClickVault }: Props) => {
   useFetchPublicData();
   const gameInfo = useGame();
 
-  const joinGame = async () => {};
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -75,7 +74,7 @@ const TeamList = ({ onClickVault }: Props) => {
       signer
     );
     const gid = Number(router.query.gid);
-    const wage = gameInfo.data[gid].wage;
+    const wage = gameInfo.data![gid].wage;
     const result = await tradeContract.joinGame(gid, selectedID, {
       value: wage,
     });
@@ -89,7 +88,7 @@ const TeamList = ({ onClickVault }: Props) => {
       signer
     );
     const gid = Number(router.query.gid);
-    const wage = gameInfo.data[gid].wage;
+    const wage = gameInfo.data![gid].wage;
     const result = await tradeContract.leaveGame(gid);
   };
   const handleChangeRowsPerPage = (
@@ -102,11 +101,12 @@ const TeamList = ({ onClickVault }: Props) => {
   useEffect(() => {
     var rowData: any[] = [];
     const gid = Number(router.query.gid);
-    if (gameInfo.data.length > 0) {
-      console.log(gameInfo.data[gid]);
-      gameInfo.data[gid].teams.map((item: any, idx: number) => {
+    if (gameInfo.data!.length > 0) {
+      console.log(gameInfo.data![gid]);
+      gameInfo.data![gid].teams!.map((item: any, idx: number) => {
         rowData.push(createData("Team" + (idx + 1), item.length));
       });
+      // @ts-ignore: Object is possibly 'null'.
       setRowsData(rowData);
     }
   }, [gameInfo]);

@@ -1,7 +1,5 @@
 import GameList from "@/components/common/GameList";
 import JumpBtn from "@/components/common/JumpBtn";
-import { News } from "@/components/vaults";
-import { Vault } from "@/types/vault";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -52,7 +50,7 @@ export default function JoinGame() {
       </div>
       <div className="bg-black h-[1px]  w-screen bg-gradient-to-r from-grad1 from-0% via-grad2 via-50% to-grad3 to-90%" />
       <GameList
-        onClickVault={(_, index) => {
+        onClickVault={(_: any, index: number) => {
           setActiveVaultIndex(index);
         }}
       />

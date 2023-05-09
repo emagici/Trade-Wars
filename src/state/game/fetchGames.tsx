@@ -8,57 +8,33 @@ import {
 
 import TradeWarsJson from "../../utils/abis/TradeWars.json";
 
-export const fetchGameInfo = async () =>
-  //   chainId: string,
-  // account: string
-  {
-    //   const calls = bondsConfig.map((bond) => {
-    //     const lpContractAddress = bond.contractAddress[chainId];
-    //     return {
-    //       address: lpContractAddress,
+export const fetchGameInfo = async () => {
+  const provider = new ethers.providers.JsonRpcProvider(
+    "https://arb-goerli.g.alchemy.com/v2/OO-QwEAitxz54pj8eI5jMld-Zg7-GXKj"
+  );
+  setMulticallAddress(421613, "0x192e8eAD254c0bD71bBEB3F7Af9D3DE99a904616");
+  const ethCallProvider = new Provider(provider, 421613);
+  await ethCallProvider.init();
 
-    //       name: "getGameInfo",
+  const tradeContract = new Contract(
+    "0xd8b2b4F698C5ce283Cf9c96A7BAC58E19b98f9e1",
+    TradeWarsJson
+  );
+  var multiCalls: ContractCall[] = [tradeContract.totalGames()];
+  const results = await ethCallProvider.all(multiCalls);
+  if (results.length > 0) {
+    const totalGames = Number(results[0]._hex);
+    var gamesCall: ContractCall[] = [];
+    for (var i = 0; i < totalGames; i++) {
+      gamesCall.push(tradeContract.getGameInfo(i));
+    }
+    const gameResults = await ethCallProvider.all(gamesCall);
+    var gamesStatus: ContractCall[] = [];
+    for (var i = 0; i < totalGames; i++) {
+      gamesStatus.push(tradeContract.games(i));
+    }
+    const games = await ethCallProvider.all(gamesStatus);
 
-    //       params: [],
-    //     };
-    //   });
-    //   const rawLpAllowances = await multicall(depoDeposit, calls, web3Provider);
-    //   const parsedLpAllowances = rawLpAllowances.map((item: any) => {
-    //     const data = item;
-    //     return {
-    //       lastBlock: item["lastBlock"],
-    //       payout: item["payout"],
-    //       pricePaid: item["pricePaid"],
-    //       vesting: item["vesting"],
-    //     };
-    //   });
-    //   return parsedLpAllowances;
-    const provider = new ethers.providers.JsonRpcProvider(
-      "https://arb-goerli.g.alchemy.com/v2/OO-QwEAitxz54pj8eI5jMld-Zg7-GXKj"
-    );
-    setMulticallAddress(421613, "0x192e8eAD254c0bD71bBEB3F7Af9D3DE99a904616");
-    const ethCallProvider = new Provider(provider, 421613);
-    await ethCallProvider.init();
-
-    const tradeContract = new Contract(
-      "0xd8b2b4F698C5ce283Cf9c96A7BAC58E19b98f9e1",
-      TradeWarsJson
-    );
-    var multiCalls: ContractCall[] = [tradeContract.totalGames()];
-    const results = await ethCallProvider.all(multiCalls);
-    if (results.length > 0) {
-      const totalGames = Number(results[0]._hex);
-      var gamesCall: ContractCall[] = [];
-      for (var i = 0; i < totalGames; i++) {
-        gamesCall.push(tradeContract.getGameInfo(i));
-      }
-      const gameResults = await ethCallProvider.all(gamesCall);
-      var gamesStatus: ContractCall[] = [];
-      for (var i = 0; i < totalGames; i++) {
-        gamesStatus.push(tradeContract.games(i));
-      }
-      const games = await ethCallProvider.all(gamesStatus);
-
-      return { gameCount: totalGames, data: gameResults, games: games };
-    } else return { gameCount: 0, data: [], games: [] };
-  };
+    return { gameCount: totalGames, data: gameResults, games: games };
+  } else return { gameCount: 0, data: [], games: [] };
+};

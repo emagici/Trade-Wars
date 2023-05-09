@@ -16,7 +16,7 @@ export interface Game {
   wage?: BigNumber;
 }
 export interface GameState {
-  gameCount: number;
-  data: Game[];
-  games: GameStatus[];
+  gameCount?: number | 0;
+  data?: Game[];
+  games?: GameStatus[];
 }

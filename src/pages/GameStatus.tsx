@@ -31,7 +31,7 @@ export default function GameStatus() {
         >
           168H : 23M: 50S
         </span>
-        <span className="text-base text-step font-Poppins drop-shadow-mdbg-transparent">
+        <span className="text-base text-step font-Poppins drop-shadow-transparent">
           In around 7 days
         </span>
       </div>

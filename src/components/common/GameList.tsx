@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import JoinGameBtn from "./JoinGameBtn";
 
 type Props = {
-  onClickVault: (index: number) => void;
+  onClickVault: (_: any, index: number) => void;
 };
 interface Column {
   id: "game" | "status" | "duration" | "wager" | "players" | "joined";
@@ -71,15 +71,6 @@ function createData(
 ): Data {
   return { game, status, duration, wager, players, joined };
 }
-const userStatus = ["Join", "Joined", "Not Joined", "Won", "Lost"];
-const gameStatus = [
-  "Not_Created",
-  "Pre-Start",
-  "In-progress",
-  "Cancelled",
-  "Completed",
-];
-
 const GameList = ({ onClickVault }: Props) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(8);
@@ -113,30 +104,38 @@ const GameList = ({ onClickVault }: Props) => {
           gid: idx,
         },
       });
-    } else if (status === 4) {
-      const winID = gameInfo.games[idx].winningTeam;
-      const result = gameInfo.data[idx].teams[winID - 1].some((row) =>
-        row.includes(account)
-      );
-      router.push({
-        pathname: "/GameResult",
-        query: {
-          result: result ? "win" : "lose",
-        },
-      });
+    } else if (status === 4 && account !== undefined) {
+      if (
+        gameInfo.games !== undefined &&
+        gameInfo.data !== undefined &&
+        gameInfo.data[idx].teams !== undefined
+      ) {
+        const winID = gameInfo.games![idx].winningTeam;
+        const result = gameInfo.data[idx].teams![winID! - 1].some((row) =>
+          row.includes(account)
+        );
+        router.push({
+          pathname: "/GameResult",
+          query: {
+            result: result ? "win" : "lose",
+          },
+        });
+      }
     }
   };
   const handleUserStatus = (status: number, idx: number) => {
     if (status === 1 || account === undefined) {
       return 0;
     } else if (status === 2) {
-      if (gameInfo.data[idx].teams.some((row) => row.includes(account))) {
+      if (gameInfo.data![idx].teams!.some((row) => row.includes(account))) {
         return 1;
       } else return 2;
     } else if (status === 4) {
-      const winID = gameInfo.games[idx].winningTeam;
+      const winID = gameInfo.games![idx].winningTeam;
       if (
-        gameInfo.data[idx].teams[winID - 1].some((row) => row.includes(account))
+        gameInfo.data![idx].teams![winID! - 1].some((row) =>
+          row.includes(account)
+        )
       ) {
         return 3;
       } else return 4;
@@ -144,9 +143,9 @@ const GameList = ({ onClickVault }: Props) => {
     } else return 5;
   };
   useEffect(() => {
-    var rowData: any[] = [];
-    if (gameInfo.data.length > 0) {
-      gameInfo.data.map((item: any, idx: number) => {
+    var rowData: Data[] = [];
+    if (gameInfo.data!.length > 0) {
+      gameInfo.data!.map((item: any, idx: number) => {
         const wager = item.wage.toString();
         const ethValue = ethers.utils.formatEther(wager);
 
@@ -165,7 +164,10 @@ const GameList = ({ onClickVault }: Props) => {
           )
         );
       });
-      setRowsData(rowData);
+      if (rowData.length > 0) {
+        // @ts-ignore: Object is possibly 'null'.
+        setRowsData(rowData);
+      }
     }
   }, [gameInfo]);
   return (
