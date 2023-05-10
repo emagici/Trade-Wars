@@ -124,7 +124,7 @@ const GameList = ({ onClickVault }: Props) => {
     }
   };
   const handleUserStatus = (status: number, idx: number) => {
-    if (status === 1 || account === undefined) {
+    if (status === 1) {
       return 0;
     } else if (status === 2) {
       if (gameInfo.data![idx].teams!.some((row) => row.includes(account))) {

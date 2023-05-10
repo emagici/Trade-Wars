@@ -30,7 +30,6 @@ const Header = () => {
         </Link>
         <span className="text-base text-yellow font-Zen"> TRADE WARS</span>
       </div>
-
       <div className="flex-1 flex justify-end">
         <ConnectWallet />
       </div>

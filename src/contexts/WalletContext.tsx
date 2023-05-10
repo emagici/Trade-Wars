@@ -33,7 +33,7 @@ const WalletProvider = ({ children }: Props) => {
   const [signer, setSigner] = useState<Signer>();
   const [provider, setProvider] = useState<ethers.providers.BaseProvider>();
   const [web3Modal, setWeb3Modal] = useState<Web3Modal>();
-
+  const expectId = 421613;
   useEffect(() => {
     if (typeof window !== "undefined") {
       const web3modal = new Web3Modal({
@@ -47,7 +47,18 @@ const WalletProvider = ({ children }: Props) => {
 
   const connect = async () => {
     if (!web3Modal || isConneted) return;
-
+    if (window.ethereum.networkVersion !== expectId) {
+      try {
+        console.log(ethers.utils.hexlify(expectId));
+        await window.ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: "0x66eed" }],
+        });
+      } catch (err) {
+        // This error code indicates that the chain has not been added to MetaMask
+        console.log(err);
+      }
+    }
     try {
       const instance = await web3Modal!.connect();
 
