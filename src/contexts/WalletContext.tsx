@@ -56,6 +56,31 @@ const WalletProvider = ({ children }: Props) => {
       } catch (err) {
         // This error code indicates that the chain has not been added to MetaMask
         console.log(err);
+        // @ts-ignore: Object is possibly 'null'.
+        if (err.code === 4902) {
+          await window.ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [
+              {
+                chainName: " Arbitrum Goerli",
+                chainId: "0x66eed",
+                nativeCurrency: {
+                  name: "AGOR",
+                  decimals: 18,
+                  symbol: "AGOR",
+                },
+                rpcUrls: [
+                  "https://endpoints.omniatech.io/v1/arbitrum/goerli/public",
+                  "https://arbitrum-goerli.public.blastapi.io",
+                  "https://goerli-rollup.arbitrum.io/rpc",
+                ],
+                blockExplorerUrls: [
+                  "https://goerli-rollup-explorer.arbitrum.io",
+                ],
+              },
+            ],
+          });
+        }
       }
     }
     try {
