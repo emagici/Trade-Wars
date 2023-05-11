@@ -62,7 +62,7 @@ const WalletProvider = ({ children }: Props) => {
             method: "wallet_addEthereumChain",
             params: [
               {
-                chainName: " Arbitrum Goerli",
+                chainName: "Arbitrum Goerli",
                 chainId: "0x66eed",
                 nativeCurrency: {
                   name: "AGOR",

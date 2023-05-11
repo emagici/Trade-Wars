@@ -63,6 +63,7 @@ const TeamResultList = ({ onClickVault }: Props) => {
   const router = useRouter();
   useFetchPublicData();
   const gameInfo = useGame();
+  const gameResult = router.query.result;
 
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -105,12 +106,14 @@ const TeamResultList = ({ onClickVault }: Props) => {
   }, [gameInfo]);
   return (
     <div className="hidden flex items-center md:flex flex-col font-semibold">
-      <button
-        className={`w-[197px] h-[50px] px-4 py-1 bg-btn cursor-default z-50 drop-shadow-join mt-[72px]`}
-        onClick={handleClaim}
-      >
-        <span className="text-base font-Zen text-header">CLAIM PRIZE</span>
-      </button>
+      {gameResult === "win" && (
+        <button
+          className={`w-[197px] h-[50px] px-4 py-1 bg-btn cursor-default z-50 drop-shadow-join mt-[72px]`}
+          onClick={handleClaim}
+        >
+          <span className="text-base font-Zen text-header">CLAIM PRIZE</span>
+        </button>
+      )}
       <div className="flex items-center w-[600px] border-[12px] border-gap mt-[72px]">
         <TableContainer
           sx={{
