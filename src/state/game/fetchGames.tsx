@@ -9,9 +9,8 @@ import {
 import TradeWarsJson from "../../utils/abis/TradeWars.json";
 
 export const fetchGameInfo = async () => {
-  const provider = new ethers.providers.JsonRpcProvider(
-    "https://arb-goerli.g.alchemy.com/v2/OO-QwEAitxz54pj8eI5jMld-Zg7-GXKj"
-  );
+  const infuraUrl = process.env.NEXT_PUBLIC_INFURA_URL;
+  const provider = new ethers.providers.JsonRpcProvider(infuraUrl);
   setMulticallAddress(421613, "0x192e8eAD254c0bD71bBEB3F7Af9D3DE99a904616");
   const ethCallProvider = new Provider(provider, 421613);
   await ethCallProvider.init();

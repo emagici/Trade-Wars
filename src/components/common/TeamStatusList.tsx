@@ -1,19 +1,22 @@
 import { useWallet } from "@/hooks";
 import { useFetchPublicData, useGame } from "@/state/hook";
 import { Vault } from "@/types/vault";
+import { DuneClient, QueryParameter } from "@cowprotocol/ts-dune-client";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import { ethers } from "ethers";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { convertToObject } from "typescript";
 import Web3 from "web3";
+
+const DUNE_API_KEY = "oyZ5C5DTTtVh34HGQ69RKVa6Fwuzwe0P";
+const client = new DuneClient(DUNE_API_KEY ?? "");
+const queryID = 1168810;
 
 type Props = {
   onClickVault: (vault: Vault, index: number) => void;
@@ -86,6 +89,9 @@ const TeamStatusList = ({ onClickVault }: Props) => {
       // @ts-ignore: Object is possibly 'null'.
       setRowsData(rowData);
     }
+    client
+      .refresh(queryID)
+      .then((executionResult) => console.log(executionResult.result?.rows));
   }, [gameInfo]);
   return (
     <div className="hidden flex items-center md:flex flex-col font-semibold">
@@ -154,7 +160,7 @@ const TeamStatusList = ({ onClickVault }: Props) => {
                         {row["players"]}
                       </TableCell>
                       <TableCell key="status" align="left">
-                        ETH {row["wager"]}
+                        $ {row["wager"]}
                       </TableCell>
                     </TableRow>
                   );

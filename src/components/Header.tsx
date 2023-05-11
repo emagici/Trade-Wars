@@ -1,4 +1,5 @@
 import { ConnectWallet } from "@/components/common";
+import { useWallet } from "@/hooks";
 import { NavOption } from "@/types/common";
 import Image from "next/image";
 import Link from "next/link";
@@ -6,7 +7,7 @@ import { useRouter } from "next/router";
 
 const Header = () => {
   const router = useRouter();
-
+  const { account } = useWallet();
   const linkClass = (option: NavOption) => {
     if (
       router.pathname === option.href ||
@@ -31,7 +32,7 @@ const Header = () => {
         <span className="text-base text-yellow font-Zen"> TRADE WARS</span>
       </div>
       <div className="flex-1 flex justify-end">
-        <ConnectWallet />
+        {account === undefined ? <ConnectWallet /> : <div>as</div>}
       </div>
     </div>
   );
