@@ -8,7 +8,6 @@ const JoinGameBtn = ({ gameID }: Props) => {
   const router = useRouter();
 
   const handleConnect = () => {
-    console.log(gameID);
     router.push({
       pathname: "/SelectTeam",
       query: {

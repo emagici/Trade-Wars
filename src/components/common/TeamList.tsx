@@ -23,7 +23,7 @@ import { useEffect, useState } from "react";
 import TradeWarsJson from "../../utils/abis/TradeWars.json";
 
 type Props = {
-  onClickVault: () => void;
+  onClickVault: (idx: number) => void;
 };
 interface Column {
   id: "team" | "players";
@@ -63,11 +63,7 @@ const TeamList = ({ onClickVault }: Props) => {
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
-  const handleConnect = () => {
-    console.log("abc");
-  };
   const handleDeposit = async () => {
-    console.log(signer);
     const tradeContract = new ethers.Contract(
       "0xd8b2b4F698C5ce283Cf9c96A7BAC58E19b98f9e1",
       TradeWarsJson,
@@ -81,7 +77,6 @@ const TeamList = ({ onClickVault }: Props) => {
     setDeposit(true);
   };
   const handleWithdraw = async () => {
-    console.log(signer);
     const tradeContract = new ethers.Contract(
       "0xd8b2b4F698C5ce283Cf9c96A7BAC58E19b98f9e1",
       TradeWarsJson,
@@ -102,7 +97,6 @@ const TeamList = ({ onClickVault }: Props) => {
     var rowData: any[] = [];
     const gid = Number(router.query.gid);
     if (gameInfo.data!.length > 0) {
-      console.log(gameInfo.data![gid]);
       gameInfo.data![gid].teams!.map((item: any, idx: number) => {
         rowData.push(createData("Team" + (idx + 1), item.length));
       });
@@ -156,7 +150,7 @@ const TeamList = ({ onClickVault }: Props) => {
                     key={idx}
                     onClick={() => {
                       setSelectedTeam(row["team"]),
-                        onClickVault(),
+                        onClickVault(page * rowsPerPage + idx + 1),
                         setSelectedID(page * rowsPerPage + idx + 1);
                     }}
                     style={{

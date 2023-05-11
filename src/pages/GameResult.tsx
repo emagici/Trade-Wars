@@ -1,4 +1,4 @@
-import TeamStatusList from "@/components/common/TeamStatusList";
+import TeamResultList from "@/components/common/TeamResultList";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -64,7 +64,7 @@ export default function GameResult() {
         </div>
       )}
 
-      <TeamStatusList
+      <TeamResultList
         onClickVault={(_, index) => {
           setActiveVaultIndex(index);
         }}

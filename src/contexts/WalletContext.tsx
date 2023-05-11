@@ -49,7 +49,6 @@ const WalletProvider = ({ children }: Props) => {
     if (!web3Modal || isConneted) return;
     if (window.ethereum.networkVersion !== expectId) {
       try {
-        console.log(ethers.utils.hexlify(expectId));
         await window.ethereum.request({
           method: "wallet_switchEthereumChain",
           params: [{ chainId: "0x66eed" }],

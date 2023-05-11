@@ -87,8 +87,21 @@ export default function SelectTeam() {
         </span>
       </div>
       <TeamList
-        onClickVault={() => {
-          setWinwager(100.55);
+        onClickVault={(idx) => {
+          if (gameInfo.data !== undefined && gameInfo.data.length > 0) {
+            const gid = Number(router.query.gid);
+            // @ts-ignore: Object is possibly 'null'.
+            const teamNum = gameInfo.data[gid].teams[idx - 1].length;
+            console.log(teamNum);
+            const num = ethers.BigNumber.from(teamNum.toString());
+
+            const wa = ethers.utils.formatEther(
+              // @ts-ignore: Object is possibly 'null'.
+              gameInfo.data[gid].wage?.mul(num).toString()
+            );
+            // @ts-ignore: Object is possibly 'null'.
+            setWinwager(wa);
+          }
         }}
       />
     </div>

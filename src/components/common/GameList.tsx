@@ -82,7 +82,6 @@ const GameList = ({ onClickVault }: Props) => {
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
-  console.log(gameInfo);
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -118,6 +117,7 @@ const GameList = ({ onClickVault }: Props) => {
           pathname: "/GameResult",
           query: {
             result: result ? "win" : "lose",
+            gid: idx,
           },
         });
       }
@@ -127,14 +127,14 @@ const GameList = ({ onClickVault }: Props) => {
     if (status === 1) {
       return 0;
     } else if (status === 2) {
-      if (gameInfo.data![idx].teams!.some((row) => row.includes(account))) {
+      if (gameInfo.data![idx].teams!.some((row) => row.includes(account!))) {
         return 1;
       } else return 2;
     } else if (status === 4) {
       const winID = gameInfo.games![idx].winningTeam;
       if (
         gameInfo.data![idx].teams![winID! - 1].some((row) =>
-          row.includes(account)
+          row.includes(account!)
         )
       ) {
         return 3;

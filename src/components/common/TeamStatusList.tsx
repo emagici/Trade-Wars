@@ -19,7 +19,7 @@ type Props = {
   onClickVault: (vault: Vault, index: number) => void;
 };
 interface Column {
-  id: "team" | "wager" | "players";
+  id: "team" | "pnl" | "players";
   label: string;
   minWidth?: number;
   align?: "right";
@@ -34,8 +34,8 @@ const columns: Column[] = [
     minWidth: 170,
   },
   {
-    id: "wager",
-    label: "Total\u00a0Wagered",
+    id: "pnl",
+    label: "PNL",
     minWidth: 170,
     format: (value: number) => value.toLocaleString("en-US"),
   },
@@ -44,10 +44,10 @@ const columns: Column[] = [
 interface Data {
   team: string;
   players: number;
-  wager: number;
+  wager: string;
 }
 
-function createData(team: string, players: number, wager: number): Data {
+function createData(team: string, players: number, wager: string): Data {
   return { team, players, wager };
 }
 
@@ -81,7 +81,7 @@ const TeamStatusList = ({ onClickVault }: Props) => {
         item.map(async (address: string) => {
           const bal = await provider?.getBalance(address);
         });
-        rowData.push(createData("Team" + (idx + 1), item.length, 0));
+        rowData.push(createData("Team" + (idx + 1), item.length, "0"));
       });
       // @ts-ignore: Object is possibly 'null'.
       setRowsData(rowData);
