@@ -29,7 +29,7 @@ const Header = () => {
         {account === undefined ? (
           <ConnectWallet />
         ) : (
-          <Button
+          <div
             className="rounded-none hover:bg-yellow focus:bg-yellow font-Zen h-[25px] text-xs	bg-btn flex items-center justify-center w-[210px]"
             onClick={async () => {
               await disconnect();
@@ -50,7 +50,7 @@ const Header = () => {
               width={12}
               height={12}
             />
-          </Button>
+          </div>
         )}
       </div>
     </div>
