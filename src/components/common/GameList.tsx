@@ -223,7 +223,7 @@ const GameList = ({ onClickVault }: Props) => {
                         handlePage(row["status"], page * rowsPerPage + idx)
                       }
                     >
-                      <div className="w-100 h-100 flex flex-row align-center">
+                      <div className="w-100 h-100 flex flex-row items-center">
                         <Image
                           src="/assets/icons/user.png"
                           alt="spice"

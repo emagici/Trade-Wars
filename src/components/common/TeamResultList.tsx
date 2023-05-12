@@ -151,7 +151,7 @@ const TeamResultList = ({ onClickVault }: Props) => {
                   sx={{ maxHeight: "50px" }}
                 >
                   <TableCell key="game" align="left">
-                    <div className="w-100 h-100 flex flex-row align-center">
+                    <div className="w-100 h-100 flex flex-row items-center">
                       <Image
                         src="/assets/icons/user.png"
                         alt="spice"
@@ -181,7 +181,7 @@ const TeamResultList = ({ onClickVault }: Props) => {
                         sx={{ maxHeight: "50px" }}
                       >
                         <TableCell key="game" align="left">
-                          <div className="w-100 h-100 flex flex-row align-center">
+                          <div className="w-100 h-100 flex flex-row items-center">
                             <Image
                               src="/assets/icons/user.png"
                               alt="spice"

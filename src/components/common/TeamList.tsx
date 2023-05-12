@@ -12,6 +12,12 @@ import { ethers } from "ethers";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Button from "@mui/material/Button";
 
 import TradeWarsJson from "../../utils/abis/TradeWars.json";
 
@@ -45,13 +51,23 @@ const TeamList = ({ onClickVault }: Props) => {
   const [rowsPerPage, setRowsPerPage] = useState(8);
   const [selectedTeam, setSelectedTeam] = useState("");
   const [selectedID, setSelectedID] = useState(-1);
-  const { signer } = useWallet();
+  const [notiText, setNotiText] = useState("");
+  const { signer, account } = useWallet();
 
   const [isDeposited, setDeposit] = useState(false);
   const [rows, setRowsData] = useState([]);
   const router = useRouter();
   useFetchPublicData();
   const gameInfo = useGame();
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -64,10 +80,28 @@ const TeamList = ({ onClickVault }: Props) => {
     );
     const gid = Number(router.query.gid);
     const wage = gameInfo.data![gid].wage;
-    const result = await tradeContract.joinGame(gid, selectedID, {
-      value: wage,
-    });
-    setDeposit(true);
+    if (
+      account !== undefined &&
+      gameInfo.data![gid].teams!.some((row) => row.includes(account!))
+    ) {
+      setNotiText("You have already joined to this game.");
+      handleClickOpen();
+    } else if (
+      account !== undefined &&
+      !gameInfo.data![gid].teams!.some((row) => row.includes(account!))
+    ) {
+      const provider = ethers.getDefaultProvider();
+      const balance = await provider.getBalance(account);
+      if (balance.lt(wage!)) {
+        setNotiText("You don't have enough fund to join.");
+        handleClickOpen();
+      }
+    } else {
+      const result = await tradeContract.joinGame(gid, selectedID, {
+        value: wage,
+      });
+      setDeposit(true);
+    }
   };
   const handleWithdraw = async () => {
     const tradeContract = new ethers.Contract(
@@ -77,7 +111,15 @@ const TeamList = ({ onClickVault }: Props) => {
     );
     const gid = Number(router.query.gid);
     const wage = gameInfo.data![gid].wage;
-    const result = await tradeContract.leaveGame(gid);
+    if (
+      account !== undefined &&
+      !gameInfo.data![gid].teams!.some((row) => row.includes(account!))
+    ) {
+      setNotiText("You're not a member of this game.");
+      handleClickOpen();
+    } else {
+      const result = await tradeContract.leaveGame(gid);
+    }
   };
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -142,17 +184,21 @@ const TeamList = ({ onClickVault }: Props) => {
                     tabIndex={idx}
                     key={idx}
                     onClick={() => {
-                      setSelectedTeam(row["team"]),
-                        onClickVault(page * rowsPerPage + idx + 1),
+                      if (account !== undefined) {
+                        setSelectedTeam(row["team"]);
+                      }
+                      onClickVault(page * rowsPerPage + idx + 1),
                         setSelectedID(page * rowsPerPage + idx + 1);
                     }}
                     style={{
                       backgroundColor:
-                        selectedTeam === row["team"] ? "#111617" : "#211C16",
+                        selectedID === page * rowsPerPage + idx + 1
+                          ? "#111617"
+                          : "#211C16",
                     }}
                   >
                     <TableCell key="game" align="left">
-                      <div className="w-100 h-100 flex flex-row align-center">
+                      <div className="w-100 h-100 flex flex-row items-center">
                         <Image
                           src="/assets/icons/user.png"
                           alt="spice"
@@ -211,9 +257,13 @@ const TeamList = ({ onClickVault }: Props) => {
       <div className="flex flex-row item-center mt-[50px]">
         <button
           className={`rounded w-[222px] h-[50px] px-4 py-1 ${
-            selectedTeam === "" ? "bg-disable" : "bg-btn"
+            account === undefined || selectedTeam === ""
+              ? "bg-disable"
+              : "bg-btn"
           } ${
-            selectedTeam === "" ? "cursor-not-allowed	" : "cursor-default	"
+            account === undefined || selectedTeam === ""
+              ? "cursor-not-allowed	"
+              : "cursor-default	"
           } bg-btn z-50 drop-shadow-join`}
           disabled={selectedTeam == ""}
           onClick={handleDeposit}
@@ -222,9 +272,13 @@ const TeamList = ({ onClickVault }: Props) => {
         </button>
         <button
           className={`rounded w-[172px] h-[50px] px-4 py-1 z-50 drop-shadow-join ml-[16px] ${
-            !isDeposited ? "bg-disable" : "bg-btn"
+            account === undefined || selectedTeam === ""
+              ? "bg-disable"
+              : "bg-btn"
           } ${
-            !isDeposited ? "cursor-not-allowed	" : "cursor-default	"
+            account === undefined || selectedTeam === ""
+              ? "cursor-not-allowed	"
+              : "cursor-default	"
           } bg-btn z-50 drop-shadow-join`}
           disabled={selectedTeam == ""}
           onClick={handleWithdraw}
@@ -232,6 +286,24 @@ const TeamList = ({ onClickVault }: Props) => {
           <span className="text-base font-Zen text-header">Withdraw</span>
         </button>
       </div>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Error"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            {notiText}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} autoFocus>
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

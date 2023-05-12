@@ -10,7 +10,7 @@ import { Button } from "@mui/material";
 
 const Header = () => {
   const router = useRouter();
-  const { account } = useWallet();
+  const { account, disconnect } = useWallet();
 
   return (
     <div className="z-50 hidden md:flex left-0 top-0 right-0 h-[72px] bg-header items-center justify-between px-10 font-SuisseIntl font-semibold">
@@ -29,7 +29,12 @@ const Header = () => {
         {account === undefined ? (
           <ConnectWallet />
         ) : (
-          <Button className="rounded-none hover:bg-yellow focus:bg-yellow font-Zen h-[25px] text-xs	bg-btn flex items-center justify-center w-[210px]">
+          <Button
+            className="rounded-none hover:bg-yellow focus:bg-yellow font-Zen h-[25px] text-xs	bg-btn flex items-center justify-center w-[210px]"
+            onClick={async () => {
+              await disconnect();
+            }}
+          >
             <Image
               src="/assets/icons/account.png"
               alt="spice"
