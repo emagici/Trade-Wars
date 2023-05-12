@@ -8,7 +8,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { ethers } from "ethers";
+import { ethers, providers } from "ethers";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -52,7 +52,7 @@ const TeamList = ({ onClickVault }: Props) => {
   const [selectedTeam, setSelectedTeam] = useState("");
   const [selectedID, setSelectedID] = useState(-1);
   const [notiText, setNotiText] = useState("");
-  const { signer, account } = useWallet();
+  const { signer, account, provider } = useWallet();
 
   const [isDeposited, setDeposit] = useState(false);
   const [rows, setRowsData] = useState([]);
@@ -88,19 +88,20 @@ const TeamList = ({ onClickVault }: Props) => {
       handleClickOpen();
     } else if (
       account !== undefined &&
+      provider !== undefined &&
       !gameInfo.data![gid].teams!.some((row) => row.includes(account!))
     ) {
-      const provider = ethers.getDefaultProvider();
-      const balance = await provider.getBalance(account);
+      const infuraUrl = process.env.NEXT_PUBLIC_INFURA_URL;
+      const ethprovider = new ethers.providers.JsonRpcProvider(infuraUrl);
+      const balance = await ethprovider!.getBalance(account);
       if (balance.lt(wage!)) {
         setNotiText("You don't have enough fund to join.");
         handleClickOpen();
+      } else {
+        const result = await tradeContract.joinGame(gid, selectedID, {
+          value: wage,
+        });
       }
-    } else {
-      const result = await tradeContract.joinGame(gid, selectedID, {
-        value: wage,
-      });
-      setDeposit(true);
     }
   };
   const handleWithdraw = async () => {
