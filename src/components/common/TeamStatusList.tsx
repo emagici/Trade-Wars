@@ -14,7 +14,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Web3 from "web3";
 
-const DUNE_API_KEY = process.env.NEXT_PUBLIC_DUNE_KE;
+const DUNE_API_KEY = process.env.NEXT_PUBLIC_DUNE_KEY;
 const client = new DuneClient(DUNE_API_KEY ?? "");
 const queryID = 1168810;
 
