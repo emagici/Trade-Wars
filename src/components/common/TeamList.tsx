@@ -1,7 +1,6 @@
 import { useWallet } from "@/hooks";
 import { useGame } from "@/state/hook";
 import { useFetchPublicData } from "@/state/hook";
-import { Vault } from "@/types/vault";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -10,12 +9,6 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import { ethers } from "ethers";
-import {
-  Contract,
-  ContractCall,
-  Provider,
-  setMulticallAddress,
-} from "ethers-multicall";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";

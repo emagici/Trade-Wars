@@ -1,7 +1,7 @@
 import { useWallet } from "@/hooks";
 import { useFetchPublicData, useGame } from "@/state/hook";
 import { Vault } from "@/types/vault";
-import { DuneClient, QueryParameter } from "@cowprotocol/ts-dune-client";
+import { DuneClient } from "@cowprotocol/ts-dune-client";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -14,7 +14,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Web3 from "web3";
 
-const DUNE_API_KEY = "oyZ5C5DTTtVh34HGQ69RKVa6Fwuzwe0P";
+const DUNE_API_KEY = process.env.NEXT_PUBLIC_DUNE_KE;
 const client = new DuneClient(DUNE_API_KEY ?? "");
 const queryID = 1168810;
 
@@ -75,9 +75,9 @@ const TeamStatusList = ({ onClickVault }: Props) => {
   useEffect(() => {
     var rowData: any[] = [];
     const gid = Number(router.query.gid);
-    const web3 = new Web3(
-      "https://arb-goerli.g.alchemy.com/v2/OO-QwEAitxz54pj8eI5jMld-Zg7-GXKj"
-    );
+    const infuraUrl = process.env.NEXT_PUBLIC_INFURA_URL;
+
+    const web3 = new Web3(infuraUrl!);
     if (gameInfo.data!.length > 0) {
       var sum = ethers.BigNumber.from("0");
       gameInfo.data![gid].teams!.map((item: any, idx: number) => {

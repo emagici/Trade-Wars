@@ -86,9 +86,8 @@ const TeamResultList = ({ onClickVault }: Props) => {
   useEffect(() => {
     var rowData: any[] = [];
     const gid = Number(router.query.gid);
-    const web3 = new Web3(
-      "https://arb-goerli.g.alchemy.com/v2/OO-QwEAitxz54pj8eI5jMld-Zg7-GXKj"
-    );
+    const infuraUrl = process.env.NEXT_PUBLIC_INFURA_URL;
+    const web3 = new Web3(infuraUrl!);
     if (gameInfo.data!.length > 0) {
       var sum = ethers.BigNumber.from("0");
       gameInfo.data![gid].teams!.map((item: any, idx: number) => {

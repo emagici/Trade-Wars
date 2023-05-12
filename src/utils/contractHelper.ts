@@ -8,9 +8,9 @@ import { getMulticallAddress } from "./addressHelpers";
 
 // eslint-disable-next-line consistent-return
 const getContract = (abi: any, address: string) => {
-  const currentWeb3 = new Web3(
-    "https://arb-goerli.g.alchemy.com/v2/OO-QwEAitxz54pj8eI5jMld-Zg7-GXKj"
-  );
+  const infuraUrl = process.env.NEXT_PUBLIC_INFURA_URL;
+
+  const currentWeb3 = new Web3(infuraUrl!);
   return new currentWeb3.eth.Contract(abi, address);
 };
 
