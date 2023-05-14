@@ -124,22 +124,31 @@ const GameList = ({ onClickVault }: Props) => {
     }
   };
   const handleUserStatus = (status: number, idx: number) => {
-    if (status === 1) {
+    if (
+      status === 1 &&
+      !gameInfo.data![idx].teams!.some((row) => row.includes(account!))
+    ) {
       return 0;
+    } else if (
+      status === 1 &&
+      gameInfo.data![idx].teams!.some((row) => row.includes(account!))
+    ) {
+      return 1;
     } else if (status === 2) {
       if (gameInfo.data![idx].teams!.some((row) => row.includes(account!))) {
         return 1;
       } else return 2;
     } else if (status === 4) {
-      const winID = gameInfo.games![idx].winningTeam;
-      if (
-        gameInfo.data![idx].teams![winID! - 1].some((row) =>
-          row.includes(account!)
-        )
-      ) {
-        return 3;
-      } else return 4;
-      // gameInfo.games[idx]
+      if (gameInfo.data![idx].teams!.some((row) => row.includes(account!))) {
+        const winID = gameInfo.games![idx].winningTeam;
+        if (
+          gameInfo.data![idx].teams![winID! - 1].some((row) =>
+            row.includes(account!)
+          )
+        ) {
+          return 3;
+        } else return 4;
+      } else return 2;
     } else return 5;
   };
   useEffect(() => {

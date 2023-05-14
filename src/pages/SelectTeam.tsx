@@ -1,4 +1,5 @@
 import TeamList from "@/components/common/TeamList";
+import { useWallet } from "@/hooks";
 import { useFetchPublicData } from "@/state/hook";
 import { useGame } from "@/state/hook";
 import { ethers } from "ethers";
@@ -6,8 +7,9 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 export default function SelectTeam() {
-  const [winWager, setWinwager] = useState(0);
+  const [winWager, setWinwager] = useState("0.0");
   const [wager, setGameWager] = useState("0");
+  const { account } = useWallet();
   const router = useRouter();
   useFetchPublicData();
   const gameInfo = useGame();
@@ -91,16 +93,19 @@ export default function SelectTeam() {
           if (gameInfo.data !== undefined && gameInfo.data.length > 0) {
             const gid = Number(router.query.gid);
             // @ts-ignore: Object is possibly 'null'.
-            const teamNum = gameInfo.data[gid].teams[idx - 1].length;
-            console.log(teamNum);
-            const num = ethers.BigNumber.from(teamNum.toString());
-
+            var sum = 0;
+            gameInfo.data![gid].teams!.map((item: any, idx: number) => {
+              sum += gameInfo.data![gid].teams![idx].length;
+            });
+            const num = ethers.BigNumber.from((sum + 1).toString());
+            const teamNum = ethers.BigNumber.from(
+              (gameInfo.data![gid].teams![idx - 1].length + 1).toString()
+            );
             const wa = ethers.utils.formatEther(
               // @ts-ignore: Object is possibly 'null'.
-              gameInfo.data[gid].wage?.mul(num).toString()
+              gameInfo.data[gid].wage?.mul(num).div(teamNum).toString()
             );
-            // @ts-ignore: Object is possibly 'null'.
-            setWinwager(wa);
+            setWinwager(wa); // @ts-ignore: Object is possibly 'null'.
           }
         }}
       />

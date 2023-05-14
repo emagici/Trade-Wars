@@ -1,12 +1,22 @@
 import TeamResultList from "@/components/common/TeamResultList";
+import { useFetchPublicData, useGame } from "@/state/hook";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function GameResult() {
   const [activeVaultIndex, setActiveVaultIndex] = useState(0);
+  const [teamID, setTeamID] = useState("");
   const router = useRouter();
   const result = router.query.result;
+  const gid = Number(router.query.gid);
+  useFetchPublicData();
+  const gameInfo = useGame();
+  useEffect(() => {
+    const winID = gameInfo.games![gid].winningTeam;
+    setTeamID("Team" + winID);
+  }, [gameInfo]);
+
   return (
     <div className="flex items-center flex-col tracking-wide aspect-[1930/1080] bg-trader bg-cover">
       <div className="md:flex justify-start items-center flex-col mt-[72px]">
@@ -42,12 +52,11 @@ export default function GameResult() {
           <span className="text-[28px] text-rogue font-Zen bg-transparent w-100">
             Rogue End
           </span>
-          -*
           <span className="text-[24px] text-balance font-Poppins  bg-transparent w-100">
-            2430
+            0
           </span>
           <span className="text-base text-id font-Poppins  bg-transparent w-100">
-            @rogue_458
+            {teamID}
           </span>
         </div>
       ) : (
@@ -56,10 +65,10 @@ export default function GameResult() {
             Rogue End
           </span>
           <span className="text-[24px] text-loseBal font-Poppins bg-transparent w-100">
-            2430
+            0
           </span>
           <span className="text-base text-loseId font-Poppins  bg-transparent w-100">
-            @rogue_458
+            {teamID}
           </span>
         </div>
       )}
