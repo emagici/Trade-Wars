@@ -1,23 +1,23 @@
 import { useWallet } from "@/hooks";
+import useRefresh from "@/hooks/useRefresh";
 import { useGame } from "@/state/hook";
 import { useFetchPublicData } from "@/state/hook";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import { ethers, providers } from "ethers";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import Button from "@mui/material/Button";
 
 import TradeWarsJson from "../../utils/abis/TradeWars.json";
 
@@ -60,6 +60,7 @@ const TeamList = ({ onClickVault }: Props) => {
   useFetchPublicData();
   const gameInfo = useGame();
   const [open, setOpen] = useState(false);
+  const { fastRefresh } = useRefresh();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -139,7 +140,7 @@ const TeamList = ({ onClickVault }: Props) => {
       // @ts-ignore: Object is possibly 'null'.
       setRowsData(rowData);
     }
-  }, [gameInfo]);
+  }, [gameInfo, fastRefresh]);
   return (
     <div className="hidden flex items-center justify-center md:flex flex-col font-semibold px-7.5 xl:px-20 pb-15">
       <div className="font-Zen text-base text-step w-[600px] ">

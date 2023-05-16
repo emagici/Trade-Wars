@@ -1,5 +1,6 @@
 import TeamStatusList from "@/components/common/TeamStatusList";
 import { useWallet } from "@/hooks";
+import useRefresh from "@/hooks/useRefresh";
 import { useFetchPublicData, useGame } from "@/state/hook";
 import { ethers } from "ethers";
 import { useRouter } from "next/router";
@@ -15,6 +16,7 @@ export default function GameStatus() {
   useFetchPublicData();
   const gameInfo = useGame();
   const { connect, provider, account } = useWallet();
+  const { fastRefresh } = useRefresh();
   const gid = Number(router.query.gid);
 
   useEffect(() => {
@@ -48,7 +50,7 @@ export default function GameStatus() {
       );
       setWinWager(wa);
     }
-  }, [gameInfo]);
+  }, [gameInfo, fastRefresh]);
   return (
     <div className="flex flex-col tracking-wide aspect-[1930/1080] bg-trader bg-cover">
       <div className="md:flex justify-start items-center flex-col mt-10">

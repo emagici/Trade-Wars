@@ -1,4 +1,5 @@
 import { useWallet } from "@/hooks";
+import useRefresh from "@/hooks/useRefresh";
 import { useFetchPublicData, useGame } from "@/state/hook";
 import { Vault } from "@/types/vault";
 import Table from "@mui/material/Table";
@@ -64,6 +65,7 @@ const TeamResultList = ({ onClickVault }: Props) => {
   useFetchPublicData();
   const gameInfo = useGame();
   const gameResult = router.query.result;
+  const { fastRefresh } = useRefresh();
 
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -102,7 +104,7 @@ const TeamResultList = ({ onClickVault }: Props) => {
       // @ts-ignore: Object is possibly 'null'.
       setWinID(wID);
     }
-  }, [gameInfo]);
+  }, [gameInfo, fastRefresh]);
   return (
     <div className="hidden flex items-center md:flex flex-col font-semibold">
       {gameResult === "win" && (

@@ -70,7 +70,7 @@ export default function SelectTeam() {
           Wager Amount
         </span>
 
-        <span className="text-[24px] text-step font-Zen drop-shadow-md	 bg-transparent">
+        <span className="text-[24px] text-step font-Zen drop-shadow-md bg-transparent">
           ETH {wager}
         </span>
       </div>

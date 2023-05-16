@@ -1,4 +1,5 @@
 import { useWallet } from "@/hooks";
+import useRefresh from "@/hooks/useRefresh";
 import { useFetchPublicData, useGame } from "@/state/hook";
 import { Vault } from "@/types/vault";
 import { DuneClient } from "@cowprotocol/ts-dune-client";
@@ -61,6 +62,8 @@ const TeamStatusList = ({ onClickVault }: Props) => {
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
+  const { fastRefresh } = useRefresh();
+
   const router = useRouter();
   useFetchPublicData();
   const gameInfo = useGame();
@@ -94,7 +97,7 @@ const TeamStatusList = ({ onClickVault }: Props) => {
     client
       .refresh(queryID)
       .then((executionResult) => console.log(executionResult.result?.rows));
-  }, [gameInfo, account]);
+  }, [gameInfo, account, fastRefresh]);
   return (
     <div className="hidden flex items-center md:flex flex-col font-semibold">
       <div className="flex items-center w-[1156px] border-[12px] border-gap mt-[72px]">

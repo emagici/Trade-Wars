@@ -1,4 +1,5 @@
 import { useWallet } from "@/hooks";
+import useRefresh from "@/hooks/useRefresh";
 import { useFetchPublicData, useGame } from "@/state/hook";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -79,6 +80,8 @@ const GameList = ({ onClickVault }: Props) => {
   useFetchPublicData();
   const gameInfo = useGame();
   const { connect, provider, account } = useWallet();
+  const { fastRefresh } = useRefresh();
+
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -178,7 +181,7 @@ const GameList = ({ onClickVault }: Props) => {
         setRowsData(rowData);
       }
     }
-  }, [gameInfo]);
+  }, [gameInfo, fastRefresh]);
   return (
     <div className="hidden flex items-center md:flex flex-col font-semibold mt-10">
       <TableContainer
