@@ -20,6 +20,7 @@ import { useEffect, useState } from "react";
 import Web3 from "web3";
 
 import TradeWarsJson from "../../utils/abis/TradeWars.json";
+import PlayerStatusList from "./PlayerStatusList";
 
 type Props = {
   onClickVault: (vault: Vault, index: number) => void;
@@ -60,6 +61,7 @@ function createData(team: string, players: number, wager: number): Data {
 const TeamResultList = ({ onClickVault }: Props) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [currentTeamID, setCurrentTeamID] = useState(-1);
   const [winID, setWinID] = useState(0);
   const [rows, setRowsData] = useState([]);
   const { provider, signer } = useWallet();
@@ -69,7 +71,9 @@ const TeamResultList = ({ onClickVault }: Props) => {
   };
 
   const handleClose = (event: any, reason: any) => {
-    if (reason !== "backdropClick") {
+    if (currentTeamID !== -1) {
+      setOpen(false);
+    } else if (reason !== "backdropClick" && currentTeamID === -1) {
       setOpen(false);
     }
   };
@@ -99,6 +103,7 @@ const TeamResultList = ({ onClickVault }: Props) => {
       const wage = gameInfo.data![gid].wage;
       try {
         const result = await tradeContract.claim(gid);
+        setCurrentTeamID(-1);
         setOpen(true);
         const receipt = await result.wait();
 
@@ -176,6 +181,10 @@ const TeamResultList = ({ onClickVault }: Props) => {
                   tabIndex={-1}
                   key={0}
                   sx={{ maxHeight: "50px" }}
+                  onClick={() => {
+                    setOpen(true);
+                    setCurrentTeamID(winID);
+                  }}
                 >
                   <TableCell key="game" align="left">
                     <div className="w-100 h-100 flex flex-row items-center">
@@ -206,6 +215,10 @@ const TeamResultList = ({ onClickVault }: Props) => {
                         tabIndex={-1}
                         key={idx}
                         sx={{ maxHeight: "50px" }}
+                        onClick={() => {
+                          setOpen(true);
+                          setCurrentTeamID(page * rowsPerPage + idx + 1);
+                        }}
                       >
                         <TableCell key="game" align="left">
                           <div className="w-100 h-100 flex flex-row items-center">
@@ -251,23 +264,30 @@ const TeamResultList = ({ onClickVault }: Props) => {
           }}
         >
           <DialogContent className="bg-gap flex flex-col items-center justify-center">
-            <Image
-              src="/assets/icons/loader.gif"
-              alt="spice"
-              width={150}
-              height={150}
-            />
-            <DialogContentText
-              id="alert-dialog-description"
-              style={{
-                textShadow:
-                  "0px 2px 0px rgba(0, 0, 0, 0.2), 0px 0px 44px #329BFF",
-              }}
-            >
-              <span className="text-btn text-2xl mt-[8px]">
-                Transaction Loading...
-              </span>
-            </DialogContentText>
+            {currentTeamID === -1 && (
+              <Image
+                src="/assets/icons/loader.gif"
+                alt="spice"
+                width={150}
+                height={150}
+              />
+            )}
+
+            {currentTeamID === -1 ? (
+              <DialogContentText
+                id="alert-dialog-description"
+                style={{
+                  textShadow:
+                    "0px 2px 0px rgba(0, 0, 0, 0.2), 0px 0px 44px #329BFF",
+                }}
+              >
+                <span className="text-btn text-2xl mt-[8px]">
+                  Transaction Loading...
+                </span>
+              </DialogContentText>
+            ) : (
+              <PlayerStatusList teamID={currentTeamID} />
+            )}
           </DialogContent>
         </Dialog>
       </div>

@@ -3,6 +3,12 @@ import useRefresh from "@/hooks/useRefresh";
 import { useFetchPublicData, useGame } from "@/state/hook";
 import { Vault } from "@/types/vault";
 import { DuneClient } from "@cowprotocol/ts-dune-client";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -12,6 +18,8 @@ import TableRow from "@mui/material/TableRow";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+
+import PlayerStatusList from "./PlayerStatusList";
 
 const DUNE_API_KEY = process.env.NEXT_PUBLIC_DUNE_KEY;
 const client = new DuneClient(DUNE_API_KEY ?? "");
@@ -56,6 +64,7 @@ function createData(team: string, players: number, wager: string): Data {
 const TeamStatusList = ({ onClickVault }: Props) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [currentTeamID, setTeamID] = useState(-1);
   const [myTeam, setMyTeam] = useState(-1);
   const [rows, setRowsData] = useState([]);
   const { provider, account } = useWallet();
@@ -63,7 +72,14 @@ const TeamStatusList = ({ onClickVault }: Props) => {
     setPage(newPage);
   };
   const { fastRefresh } = useRefresh();
+  const [open, setOpen] = useState(false);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
 
+  const handleClose = (event: any, reason: any) => {
+    setOpen(false);
+  };
   const router = useRouter();
   useFetchPublicData();
   const gameInfo = useGame();
@@ -94,9 +110,9 @@ const TeamStatusList = ({ onClickVault }: Props) => {
       // @ts-ignore: Object is possibly 'null'.
       setRowsData(rowData);
     }
-    client
-      .refresh(queryID)
-      .then((executionResult) => console.log(executionResult.result?.rows));
+    // client
+    //   .refresh(queryID)
+    //   .then((executionResult) => console.log(executionResult.result?.rows));
   }, [gameInfo, account, fastRefresh]);
   return (
     <div className="hidden flex items-center md:flex flex-col font-semibold">
@@ -148,6 +164,10 @@ const TeamStatusList = ({ onClickVault }: Props) => {
                       tabIndex={-1}
                       key={idx}
                       sx={{ maxHeight: "50px" }}
+                      onClick={() => {
+                        setOpen(true);
+                        setTeamID(page * rowsPerPage + idx + 1);
+                      }}
                     >
                       <TableCell key="game" align="left">
                         <div className="w-100 h-100 flex flex-row items-center">
@@ -182,6 +202,30 @@ const TeamStatusList = ({ onClickVault }: Props) => {
             </TableBody>
           </Table>
         </TableContainer>
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+          sx={{
+            backgroundColor: "transparent !important", // gets overridden if not important
+
+            ".MuiDialog-paper": {
+              backgroundColor: "rgba(17, 22, 23, 1)",
+              borderWidth: "0px",
+              width: "670px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            },
+          }}
+        >
+          <DialogContent className="bg-gap flex flex-col items-center justify-center">
+            <DialogContentText id="alert-dialog-description">
+              <PlayerStatusList teamID={currentTeamID} />
+            </DialogContentText>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
