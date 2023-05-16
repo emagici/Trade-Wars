@@ -50,11 +50,11 @@ const TeamList = ({ onClickVault }: Props) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(8);
   const [selectedTeam, setSelectedTeam] = useState("");
+  const [isTX, setTXStatus] = useState(false);
   const [selectedID, setSelectedID] = useState(-1);
   const [notiText, setNotiText] = useState("");
   const { signer, account, provider } = useWallet();
 
-  const [isDeposited, setDeposit] = useState(false);
   const [rows, setRowsData] = useState([]);
   const router = useRouter();
   useFetchPublicData();
@@ -66,8 +66,10 @@ const TeamList = ({ onClickVault }: Props) => {
     setOpen(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleClose = (event: any, reason: any) => {
+    if (reason !== "backdropClick") {
+      setOpen(false);
+    }
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -99,9 +101,25 @@ const TeamList = ({ onClickVault }: Props) => {
         setNotiText("You don't have enough fund to join.");
         handleClickOpen();
       } else {
-        const result = await tradeContract.joinGame(gid, selectedID, {
-          value: wage,
-        });
+        try {
+          const result = await tradeContract.joinGame(gid, selectedID, {
+            value: wage,
+          });
+          setTXStatus(true);
+          setOpen(true);
+          setNotiText("Transaction Loading...");
+          const receipt = await result.wait();
+
+          if (receipt.status) {
+            setTXStatus(false);
+            setOpen(false);
+            setNotiText("");
+          }
+        } catch (error) {
+          setTXStatus(false);
+          setOpen(false);
+          setNotiText("");
+        }
       }
     }
   };
@@ -120,7 +138,23 @@ const TeamList = ({ onClickVault }: Props) => {
       setNotiText("You're not a member of this game.");
       handleClickOpen();
     } else {
-      const result = await tradeContract.leaveGame(gid);
+      try {
+        const result = await tradeContract.leaveGame(gid);
+        setTXStatus(true);
+        setOpen(true);
+        setNotiText("Transaction Loading...");
+        const receipt = await result.wait();
+
+        if (receipt.status) {
+          setTXStatus(false);
+          setOpen(false);
+          setNotiText("");
+        }
+      } catch (error) {
+        setTXStatus(false);
+        setOpen(false);
+        setNotiText("");
+      }
     }
   };
   const handleChangeRowsPerPage = (
@@ -293,18 +327,47 @@ const TeamList = ({ onClickVault }: Props) => {
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
+        sx={{
+          backgroundColor: "transparent !important", // gets overridden if not important
+
+          ".MuiDialog-paper": {
+            backgroundColor: "rgba(17, 22, 23, 1)",
+            borderWidth: "0px",
+            width: "670px",
+            height: "350px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          },
+        }}
       >
-        <DialogTitle id="alert-dialog-title">{"Error"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            {notiText}
+        <DialogContent className="bg-gap flex flex-col items-center justify-center">
+          {isTX && (
+            <Image
+              src="/assets/icons/loader.gif"
+              alt="spice"
+              width={150}
+              height={150}
+            />
+          )}
+          <DialogContentText
+            id="alert-dialog-description"
+            style={{
+              textShadow:
+                "0px 2px 0px rgba(0, 0, 0, 0.2), 0px 0px 44px #329BFF",
+            }}
+          >
+            <span className="text-btn text-2xl mt-[8px]">{notiText}</span>
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} autoFocus>
-            OK
-          </Button>
-        </DialogActions>
+        {!isTX && (
+          <DialogActions className="bg-gap">
+            {/* @ts-ignore */}
+            <Button onClick={handleClose} autoFocus>
+              OK
+            </Button>
+          </DialogActions>
+        )}
       </Dialog>
     </div>
   );

@@ -2,6 +2,11 @@ import { useWallet } from "@/hooks";
 import useRefresh from "@/hooks/useRefresh";
 import { useFetchPublicData, useGame } from "@/state/hook";
 import { Vault } from "@/types/vault";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -58,6 +63,16 @@ const TeamResultList = ({ onClickVault }: Props) => {
   const [winID, setWinID] = useState(0);
   const [rows, setRowsData] = useState([]);
   const { provider, signer } = useWallet();
+  const [open, setOpen] = useState(false);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (event: any, reason: any) => {
+    if (reason !== "backdropClick") {
+      setOpen(false);
+    }
+  };
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -82,7 +97,17 @@ const TeamResultList = ({ onClickVault }: Props) => {
       );
       const gid = Number(router.query.gid);
       const wage = gameInfo.data![gid].wage;
-      const result = await tradeContract.claim(gid);
+      try {
+        const result = await tradeContract.claim(gid);
+        setOpen(true);
+        const receipt = await result.wait();
+
+        if (receipt.status) {
+          setOpen(false);
+        }
+      } catch (error) {
+        setOpen(false);
+      }
     }
   };
   useEffect(() => {
@@ -206,6 +231,45 @@ const TeamResultList = ({ onClickVault }: Props) => {
             </TableBody>
           </Table>
         </TableContainer>
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+          sx={{
+            backgroundColor: "transparent !important", // gets overridden if not important
+
+            ".MuiDialog-paper": {
+              backgroundColor: "rgba(17, 22, 23, 1)",
+              borderWidth: "0px",
+              width: "670px",
+              height: "350px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            },
+          }}
+        >
+          <DialogContent className="bg-gap flex flex-col items-center justify-center">
+            <Image
+              src="/assets/icons/loader.gif"
+              alt="spice"
+              width={150}
+              height={150}
+            />
+            <DialogContentText
+              id="alert-dialog-description"
+              style={{
+                textShadow:
+                  "0px 2px 0px rgba(0, 0, 0, 0.2), 0px 0px 44px #329BFF",
+              }}
+            >
+              <span className="text-btn text-2xl mt-[8px]">
+                Transaction Loading...
+              </span>
+            </DialogContentText>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
