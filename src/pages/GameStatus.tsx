@@ -48,7 +48,7 @@ export default function GameStatus() {
         // @ts-ignore: Object is possibly 'null'.
         gameInfo.data[gid].wage?.mul(num).div(teamNum).toString()
       );
-      setWinWager(wa);
+      setWinWager(Number(wa).toFixed());
     }
   }, [gameInfo, fastRefresh]);
   return (

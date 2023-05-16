@@ -105,7 +105,7 @@ export default function SelectTeam() {
               // @ts-ignore: Object is possibly 'null'.
               gameInfo.data[gid].wage?.mul(num).div(teamNum).toString()
             );
-            setWinwager(wa); // @ts-ignore: Object is possibly 'null'.
+            setWinwager(Number(wa).toFixed(2)); // @ts-ignore: Object is possibly 'null'.
           }
         }}
       />
