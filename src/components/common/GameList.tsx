@@ -80,7 +80,6 @@ const GameList = ({ onClickVault }: Props) => {
   useFetchPublicData();
   const gameInfo = useGame();
   const { isConnected, address } = useAccount();
-  console.log("wagmi", isConnected, address);
   const { fastRefresh } = useRefresh();
 
   const handleChangePage = (event: unknown, newPage: number) => {
