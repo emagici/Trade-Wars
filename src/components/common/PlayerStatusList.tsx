@@ -1,4 +1,3 @@
-import { useWallet } from "@/hooks";
 import useRefresh from "@/hooks/useRefresh";
 import { useFetchPublicData, useGame } from "@/state/hook";
 import { Vault } from "@/types/vault";
@@ -41,7 +40,7 @@ const PlayerStatusList = ({ teamID }: Props) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [winID, setWinID] = useState(0);
   const [rows, setRowsData] = useState([]);
-  const { provider, signer } = useWallet();
+
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };

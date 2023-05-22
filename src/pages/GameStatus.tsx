@@ -1,10 +1,10 @@
 import TeamStatusList from "@/components/common/TeamStatusList";
-import { useWallet } from "@/hooks";
 import useRefresh from "@/hooks/useRefresh";
 import { useFetchPublicData, useGame } from "@/state/hook";
 import { ethers } from "ethers";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useAccount } from "wagmi";
 
 export default function GameStatus() {
   const [activeVaultIndex, setActiveVaultIndex] = useState(0);
@@ -15,7 +15,7 @@ export default function GameStatus() {
   const router = useRouter();
   useFetchPublicData();
   const gameInfo = useGame();
-  const { connect, provider, account } = useWallet();
+  const { address, isConnected } = useAccount();
   const { fastRefresh } = useRefresh();
   const gid = Number(router.query.gid);
 
@@ -25,10 +25,10 @@ export default function GameStatus() {
       var sum = 0;
       var teamId = 1;
       gameInfo.data![gid].teams!.map((item: any, idx: number) => {
-        item.map((address: string) => {
+        item.map((addr: string) => {
           if (
-            account !== undefined &&
-            address.toLocaleLowerCase() === account!.toLowerCase()
+            isConnected &&
+            addr.toLocaleLowerCase() === address!.toLowerCase()
           ) {
             setMyTeam(idx);
             teamId = idx;
@@ -36,7 +36,7 @@ export default function GameStatus() {
         });
         sum += gameInfo.data![gid].teams![idx].length;
       });
-      if (gameInfo.data![gid].teams!.some((row) => row.includes(account!))) {
+      if (gameInfo.data![gid].teams!.some((row) => row.includes(address!))) {
         setJoined(true);
       }
 

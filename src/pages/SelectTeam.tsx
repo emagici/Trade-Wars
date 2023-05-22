@@ -1,5 +1,4 @@
 import TeamList from "@/components/common/TeamList";
-import { useWallet } from "@/hooks";
 import { useFetchPublicData } from "@/state/hook";
 import { useGame } from "@/state/hook";
 import { ethers } from "ethers";
@@ -9,7 +8,6 @@ import { useEffect, useState } from "react";
 export default function SelectTeam() {
   const [winWager, setWinwager] = useState("0.0");
   const [wager, setGameWager] = useState("0");
-  const { account } = useWallet();
   const router = useRouter();
   useFetchPublicData();
   const gameInfo = useGame();

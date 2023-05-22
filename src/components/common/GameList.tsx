@@ -1,4 +1,3 @@
-import { useWallet } from "@/hooks";
 import useRefresh from "@/hooks/useRefresh";
 import { useFetchPublicData, useGame } from "@/state/hook";
 import Table from "@mui/material/Table";
@@ -12,6 +11,7 @@ import { ethers } from "ethers";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useAccount } from "wagmi";
 
 import JoinGameBtn from "./JoinGameBtn";
 
@@ -79,7 +79,7 @@ const GameList = ({ onClickVault }: Props) => {
   const router = useRouter();
   useFetchPublicData();
   const gameInfo = useGame();
-  const { connect, provider, account } = useWallet();
+  const { isConnected, address } = useAccount();
   const { fastRefresh } = useRefresh();
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -106,7 +106,7 @@ const GameList = ({ onClickVault }: Props) => {
           gid: idx,
         },
       });
-    } else if (status === 4 && account !== undefined) {
+    } else if (status === 4 && isConnected) {
       if (
         gameInfo.games !== undefined &&
         gameInfo.data !== undefined &&
@@ -114,7 +114,7 @@ const GameList = ({ onClickVault }: Props) => {
       ) {
         const winID = gameInfo.games![idx].winningTeam;
         const result = gameInfo.data[idx].teams![winID! - 1].some((row) =>
-          row.includes(account)
+          row.includes(address!)
         );
         router.push({
           pathname: "/GameResult",
@@ -129,24 +129,24 @@ const GameList = ({ onClickVault }: Props) => {
   const handleUserStatus = (status: number, idx: number) => {
     if (
       status === 1 &&
-      !gameInfo.data![idx].teams!.some((row) => row.includes(account!))
+      !gameInfo.data![idx].teams!.some((row) => row.includes(address!))
     ) {
       return 0;
     } else if (
       status === 1 &&
-      gameInfo.data![idx].teams!.some((row) => row.includes(account!))
+      gameInfo.data![idx].teams!.some((row) => row.includes(address!))
     ) {
       return 1;
     } else if (status === 2) {
-      if (gameInfo.data![idx].teams!.some((row) => row.includes(account!))) {
+      if (gameInfo.data![idx].teams!.some((row) => row.includes(address!))) {
         return 1;
       } else return 2;
     } else if (status === 4) {
-      if (gameInfo.data![idx].teams!.some((row) => row.includes(account!))) {
+      if (gameInfo.data![idx].teams!.some((row) => row.includes(address!))) {
         const winID = gameInfo.games![idx].winningTeam;
         if (
           gameInfo.data![idx].teams![winID! - 1].some((row) =>
-            row.includes(account!)
+            row.includes(address!)
           )
         ) {
           return 3;

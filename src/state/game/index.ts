@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Game, GameState } from "../types";
+import { GameState } from "../types";
 import { fetchGameInfo } from "./fetchGames";
 
 const initialState: GameState = { gameCount: 0, data: [], games: [] };

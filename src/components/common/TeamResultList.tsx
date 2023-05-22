@@ -1,12 +1,9 @@
-import { useWallet } from "@/hooks";
 import useRefresh from "@/hooks/useRefresh";
 import { useFetchPublicData, useGame } from "@/state/hook";
 import { Vault } from "@/types/vault";
 import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -17,7 +14,7 @@ import { ethers } from "ethers";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import Web3 from "web3";
+import { useAccount, useContractWrite } from "wagmi";
 
 import TradeWarsJson from "../../utils/abis/TradeWars.json";
 import PlayerStatusList from "./PlayerStatusList";
@@ -25,28 +22,6 @@ import PlayerStatusList from "./PlayerStatusList";
 type Props = {
   onClickVault: (vault: Vault, index: number) => void;
 };
-interface Column {
-  id: "team" | "wager" | "players";
-  label: string;
-  minWidth?: number;
-  align?: "right";
-  format?: (value: number) => string;
-}
-
-const columns: Column[] = [
-  { id: "team", label: "Team", minWidth: 170 },
-  {
-    id: "players",
-    label: "No.\u00a0Of\u00a0Players",
-    minWidth: 170,
-  },
-  {
-    id: "wager",
-    label: "Total\u00a0Wagered",
-    minWidth: 170,
-    format: (value: number) => value.toLocaleString("en-US"),
-  },
-];
 
 interface Data {
   team: string;
@@ -64,8 +39,8 @@ const TeamResultList = ({ onClickVault }: Props) => {
   const [currentTeamID, setCurrentTeamID] = useState(-1);
   const [winID, setWinID] = useState(0);
   const [rows, setRowsData] = useState([]);
-  const { provider, signer } = useWallet();
   const [open, setOpen] = useState(false);
+  const { isConnected, address } = useAccount();
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -85,7 +60,17 @@ const TeamResultList = ({ onClickVault }: Props) => {
   const gameInfo = useGame();
   const gameResult = router.query.result;
   const { fastRefresh } = useRefresh();
-
+  const {
+    data: claimData,
+    writeAsync: claimGame,
+    isLoading: claimLoading,
+    isSuccess: claimSuccess,
+    status: claimStatus,
+  } = useContractWrite({
+    address: "0xd8b2b4F698C5ce283Cf9c96A7BAC58E19b98f9e1",
+    abi: TradeWarsJson,
+    functionName: "claim",
+  });
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -93,39 +78,30 @@ const TeamResultList = ({ onClickVault }: Props) => {
     setPage(0);
   };
   const handleClaim = async () => {
-    if (signer !== undefined) {
-      const tradeContract = new ethers.Contract(
-        "0xd8b2b4F698C5ce283Cf9c96A7BAC58E19b98f9e1",
-        TradeWarsJson,
-        signer
-      );
+    if (isConnected) {
       const gid = Number(router.query.gid);
-      const wage = gameInfo.data![gid].wage;
       try {
-        const result = await tradeContract.claim(gid);
-        setCurrentTeamID(-1);
-        setOpen(true);
-        const receipt = await result.wait();
-
-        if (receipt.status) {
-          setOpen(false);
-        }
+        const result = await claimGame({
+          args: [gid],
+        });
       } catch (error) {
-        setOpen(false);
+        console.log(error);
       }
     }
   };
   useEffect(() => {
+    if (claimLoading) {
+      setOpen(true);
+    }
+    if (claimSuccess || claimStatus === "error") {
+      setOpen(false);
+    }
+  }, [claimLoading, claimSuccess, claimStatus]);
+  useEffect(() => {
     var rowData: any[] = [];
     const gid = Number(router.query.gid);
-    const infuraUrl = process.env.NEXT_PUBLIC_INFURA_URL;
-    const web3 = new Web3(infuraUrl!);
     if (gameInfo.data!.length > 0) {
-      var sum = ethers.BigNumber.from("0");
       gameInfo.data![gid].teams!.map((item: any, idx: number) => {
-        item.map(async (address: string) => {
-          const bal = await provider?.getBalance(address);
-        });
         rowData.push(createData("Team" + (idx + 1), item.length, 0));
       });
       const wID = Number(gameInfo.games![gid].winningTeam);
