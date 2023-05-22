@@ -7,8 +7,6 @@ import WalletProvider from "@/contexts/WalletContext";
 import { Provider } from "react-redux";
 import { RefreshContextProvider } from "@/contexts/RefreshContext";
 import store from "../state";
-import { SessionProvider } from "next-auth/react";
-import type { Session } from "next-auth";
 import {
   RainbowKitProvider,
   getDefaultWallets,
@@ -63,10 +61,7 @@ const wagmiConfig = createConfig({
   webSocketPublicClient,
 });
 
-export default function App({
-  Component,
-  pageProps,
-}: AppProps<{ session: Session }>) {
+export default function App({ Component, pageProps }: AppProps<>) {
   return (
     <Provider store={store}>
       {/* @ts-ignore */}
