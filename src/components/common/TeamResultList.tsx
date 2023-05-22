@@ -3,7 +3,6 @@ import useRefresh from "@/hooks/useRefresh";
 import { useFetchPublicData, useGame } from "@/state/hook";
 import { Vault } from "@/types/vault";
 import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -17,7 +16,6 @@ import { ethers } from "ethers";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import Web3 from "web3";
 
 import TradeWarsJson from "../../utils/abis/TradeWars.json";
 import PlayerStatusList from "./PlayerStatusList";
@@ -118,14 +116,8 @@ const TeamResultList = ({ onClickVault }: Props) => {
   useEffect(() => {
     var rowData: any[] = [];
     const gid = Number(router.query.gid);
-    const infuraUrl = process.env.NEXT_PUBLIC_INFURA_URL;
-    const web3 = new Web3(infuraUrl!);
     if (gameInfo.data!.length > 0) {
-      var sum = ethers.BigNumber.from("0");
       gameInfo.data![gid].teams!.map((item: any, idx: number) => {
-        item.map(async (address: string) => {
-          const bal = await provider?.getBalance(address);
-        });
         rowData.push(createData("Team" + (idx + 1), item.length, 0));
       });
       const wID = Number(gameInfo.games![gid].winningTeam);

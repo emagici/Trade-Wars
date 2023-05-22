@@ -5,6 +5,10 @@ import gameReducer from "./game";
 
 const store = configureStore({
   reducer: { game: gameReducer },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
 
 export type AppDispatch = typeof store.dispatch;

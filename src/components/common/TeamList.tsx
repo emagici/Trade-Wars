@@ -1,4 +1,3 @@
-import { useWallet } from "@/hooks";
 import useRefresh from "@/hooks/useRefresh";
 import { useGame } from "@/state/hook";
 import { useFetchPublicData } from "@/state/hook";
@@ -7,17 +6,17 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { ethers, providers } from "ethers";
+import { ethers } from "ethers";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useAccount, useContractWrite } from "wagmi";
 
 import TradeWarsJson from "../../utils/abis/TradeWars.json";
 
@@ -53,7 +52,7 @@ const TeamList = ({ onClickVault }: Props) => {
   const [isTX, setTXStatus] = useState(false);
   const [selectedID, setSelectedID] = useState(-1);
   const [notiText, setNotiText] = useState("");
-  const { signer, account, provider } = useWallet();
+  const { isConnected, address } = useAccount();
 
   const [rows, setRowsData] = useState([]);
   const router = useRouter();
@@ -61,11 +60,35 @@ const TeamList = ({ onClickVault }: Props) => {
   const gameInfo = useGame();
   const [open, setOpen] = useState(false);
   const { fastRefresh } = useRefresh();
+  const gid = Number(router.query.gid);
 
+  const {
+    data: joinData,
+    writeAsync: joinGame,
+    isLoading: joinLoading,
+    isSuccess: joinSuccess,
+    status: joinStatus,
+    error: joinError,
+  } = useContractWrite({
+    address: "0xd8b2b4F698C5ce283Cf9c96A7BAC58E19b98f9e1",
+    abi: TradeWarsJson,
+    functionName: "joinGame",
+  });
+  const {
+    data: leaveData,
+    writeAsync: leaveGame,
+    isLoading: leaveLoading,
+    isSuccess: leaveSuccess,
+    status: leaveStatus,
+    error: leaveError,
+  } = useContractWrite({
+    address: "0xd8b2b4F698C5ce283Cf9c96A7BAC58E19b98f9e1",
+    abi: TradeWarsJson,
+    functionName: "leaveGame",
+  });
   const handleClickOpen = () => {
     setOpen(true);
   };
-
   const handleClose = (event: any, reason: any) => {
     if (reason !== "backdropClick") {
       setOpen(false);
@@ -76,84 +99,50 @@ const TeamList = ({ onClickVault }: Props) => {
     setPage(newPage);
   };
   const handleDeposit = async () => {
-    const tradeContract = new ethers.Contract(
-      "0xd8b2b4F698C5ce283Cf9c96A7BAC58E19b98f9e1",
-      TradeWarsJson,
-      signer
-    );
-    const gid = Number(router.query.gid);
     const wage = gameInfo.data![gid].wage;
     if (
-      account !== undefined &&
-      gameInfo.data![gid].teams!.some((row) => row.includes(account!))
+      isConnected &&
+      gameInfo.data![gid].teams!.some((row) => row.includes(address!))
     ) {
       setNotiText("You have already joined to this game.");
       handleClickOpen();
     } else if (
-      account !== undefined &&
-      provider !== undefined &&
-      !gameInfo.data![gid].teams!.some((row) => row.includes(account!))
+      isConnected &&
+      !gameInfo.data![gid].teams!.some((row) => row.includes(address!))
     ) {
       const infuraUrl = process.env.NEXT_PUBLIC_INFURA_URL;
       const ethprovider = new ethers.providers.JsonRpcProvider(infuraUrl);
-      const balance = await ethprovider!.getBalance(account);
+      const balance = await ethprovider!.getBalance(address!);
       if (balance.lt(wage!)) {
         setNotiText("You don't have enough fund to join.");
         handleClickOpen();
       } else {
         try {
-          const result = await tradeContract.joinGame(gid, selectedID, {
+          const result = await joinGame({
+            args: [gid, selectedID],
+            // @ts-ignore: Object is possibly 'null'.
             value: wage,
           });
-          setTXStatus(true);
-          setOpen(true);
-          setNotiText("Transaction Loading...");
-          const receipt = await result.wait();
-
-          if (receipt.status) {
-            setTXStatus(false);
-            setOpen(false);
-            setNotiText("");
-          }
         } catch (error) {
-          setTXStatus(false);
-          setOpen(false);
-          setNotiText("");
+          console.log(error);
         }
       }
     }
   };
   const handleWithdraw = async () => {
-    const tradeContract = new ethers.Contract(
-      "0xd8b2b4F698C5ce283Cf9c96A7BAC58E19b98f9e1",
-      TradeWarsJson,
-      signer
-    );
     const gid = Number(router.query.gid);
-    const wage = gameInfo.data![gid].wage;
     if (
-      account !== undefined &&
-      !gameInfo.data![gid].teams!.some((row) => row.includes(account!))
+      isConnected &&
+      !gameInfo.data![gid].teams!.some((row) => row.includes(address!))
     ) {
       setNotiText("You're not a member of this game.");
       handleClickOpen();
     } else {
       try {
-        const result = await tradeContract.leaveGame(gid);
-        setTXStatus(true);
-        setOpen(true);
-        setNotiText("Transaction Loading...");
-        const receipt = await result.wait();
-
-        if (receipt.status) {
-          setTXStatus(false);
-          setOpen(false);
-          setNotiText("");
-        }
+        // @ts-ignore: Object is possibly 'null'.
+        const result = await leaveGame({ args: [gid] });
       } catch (error) {
-        setTXStatus(false);
-        setOpen(false);
-        setNotiText("");
+        console.log(error);
       }
     }
   };
@@ -175,6 +164,30 @@ const TeamList = ({ onClickVault }: Props) => {
       setRowsData(rowData);
     }
   }, [gameInfo, fastRefresh]);
+  useEffect(() => {
+    if (joinLoading) {
+      setTXStatus(true);
+      setNotiText("Transaction Loading...");
+      setOpen(true);
+    }
+    if (joinSuccess || joinStatus === "error") {
+      setTXStatus(false);
+      setNotiText("");
+      setOpen(false);
+    }
+  }, [joinLoading, joinSuccess, joinStatus]);
+  useEffect(() => {
+    if (leaveLoading) {
+      setTXStatus(true);
+      setNotiText("Transaction Loading...");
+      setOpen(true);
+    }
+    if (leaveSuccess || leaveStatus === "error") {
+      setTXStatus(false);
+      setNotiText("");
+      setOpen(false);
+    }
+  }, [leaveLoading, leaveSuccess, leaveStatus]);
   return (
     <div className="hidden flex items-center justify-center md:flex flex-col font-semibold px-7.5 xl:px-20 pb-15">
       <div className="font-Zen text-base text-step w-[600px] ">
@@ -220,7 +233,7 @@ const TeamList = ({ onClickVault }: Props) => {
                     tabIndex={idx}
                     key={idx}
                     onClick={() => {
-                      if (account !== undefined) {
+                      if (isConnected) {
                         setSelectedTeam(row["team"]);
                       }
                       onClickVault(page * rowsPerPage + idx + 1),
@@ -293,11 +306,11 @@ const TeamList = ({ onClickVault }: Props) => {
       <div className="flex flex-row item-center mt-[50px]">
         <button
           className={`rounded w-[222px] h-[50px] px-4 py-1 ${
-            account === undefined || selectedTeam === ""
+            isConnected === false || selectedTeam === ""
               ? "bg-disable"
               : "bg-btn"
           } ${
-            account === undefined || selectedTeam === ""
+            isConnected === false || selectedTeam === ""
               ? "cursor-not-allowed	"
               : "cursor-default	"
           } bg-btn z-50 drop-shadow-join`}
@@ -308,11 +321,11 @@ const TeamList = ({ onClickVault }: Props) => {
         </button>
         <button
           className={`rounded w-[172px] h-[50px] px-4 py-1 z-50 drop-shadow-join ml-[16px] ${
-            account === undefined || selectedTeam === ""
+            isConnected === false || selectedTeam === ""
               ? "bg-disable"
               : "bg-btn"
           } ${
-            account === undefined || selectedTeam === ""
+            isConnected === false || selectedTeam === ""
               ? "cursor-not-allowed	"
               : "cursor-default	"
           } bg-btn z-50 drop-shadow-join`}
@@ -329,7 +342,6 @@ const TeamList = ({ onClickVault }: Props) => {
         aria-describedby="alert-dialog-description"
         sx={{
           backgroundColor: "transparent !important", // gets overridden if not important
-
           ".MuiDialog-paper": {
             backgroundColor: "rgba(17, 22, 23, 1)",
             borderWidth: "0px",
