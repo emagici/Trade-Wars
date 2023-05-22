@@ -61,7 +61,7 @@ const wagmiConfig = createConfig({
   webSocketPublicClient,
 });
 
-export default function App({ Component, pageProps }: AppProps<{}>) {
+export default function App({ Component, pageProps }: AppProps) {
   return (
     <Provider store={store}>
       {/* @ts-ignore */}
