@@ -93,12 +93,21 @@ const GameList = ({ onClickVault }: Props) => {
   };
   const handlePage = (status: number, idx: number) => {
     if (status === 1) {
-      router.push({
-        pathname: "/SelectTeam",
-        query: {
-          gid: idx,
-        },
-      });
+      if (gameInfo.data![idx].teams!.some((row) => row.includes(address!))) {
+        router.push({
+          pathname: "/WaitingGame",
+          query: {
+            gid: idx,
+          },
+        });
+      } else {
+        router.push({
+          pathname: "/SelectTeam",
+          query: {
+            gid: idx,
+          },
+        });
+      }
     } else if (status === 2) {
       router.push({
         pathname: "/GameStatus",

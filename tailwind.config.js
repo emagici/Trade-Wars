@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+const plugin = require("tailwindcss/plugin");
+
 module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
@@ -73,6 +75,7 @@ module.exports = {
           "0px 0px 44 rgba(50, 155, 255, 1)",
           "0px 2px 0 rgba(0, 0, 0, 0.2)",
         ],
+        btn: "drop-shadow(0px 20px 28px rgba(0, 0, 0, 0.4))",
       },
       boxShadow: {
         title: [
@@ -94,7 +97,18 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwind-scrollbar")],
+  plugins: [
+    plugin(function ({ matchUtilities, theme }) {
+      matchUtilities(
+        {
+          "text-shadow": (value) => ({
+            textShadow: value,
+          }),
+        },
+        { values: theme("textShadow") }
+      );
+    }),
+  ],
   variants: {
     scrollbar: ["rounded"],
   },

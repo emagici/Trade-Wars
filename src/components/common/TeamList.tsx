@@ -123,6 +123,12 @@ const TeamList = ({ onClickVault }: Props) => {
             // @ts-ignore: Object is possibly 'null'.
             value: wage,
           });
+          router.push({
+            pathname: "/WaitingGame",
+            query: {
+              gid: gid,
+            },
+          });
         } catch (error) {
           console.log(error);
         }
@@ -160,6 +166,7 @@ const TeamList = ({ onClickVault }: Props) => {
       gameInfo.data![gid].teams!.map((item: any, idx: number) => {
         rowData.push(createData("Team" + (idx + 1), item.length));
       });
+
       // @ts-ignore: Object is possibly 'null'.
       setRowsData(rowData);
     }
@@ -305,22 +312,24 @@ const TeamList = ({ onClickVault }: Props) => {
       />
       <div className="flex flex-row item-center mt-[50px]">
         <button
-          className={`rounded w-[222px] h-[50px] px-4 py-1 ${
-            isConnected === false || selectedTeam === ""
-              ? "bg-disable"
-              : "bg-btn"
-          } ${
+          className={`rounded-none w-[222px] h-[50px] px-4 py-1 bg-btn ${
             isConnected === false || selectedTeam === ""
               ? "cursor-not-allowed	"
               : "cursor-default	"
           } bg-btn z-50 drop-shadow-join`}
+          style={{
+            borderImage:
+              "linear-gradient(180deg, #EDE8E2 0%, rgba(237, 232, 226, 0) 100%) 1",
+            borderWidth: "1px",
+            borderStyle: "solid",
+          }}
           disabled={selectedTeam == ""}
           onClick={handleDeposit}
         >
           <span className="text-base font-Zen text-header">Enter Wager</span>
         </button>
-        <button
-          className={`rounded w-[172px] h-[50px] px-4 py-1 z-50 drop-shadow-join ml-[16px] ${
+        {/* <button
+          className={`rounded w-[172px] h-[50px] px-4 py-1 z-50 drop-shadow-join ml-[16px] bg-transparent ${
             isConnected === false || selectedTeam === ""
               ? "bg-disable"
               : "bg-btn"
@@ -328,12 +337,20 @@ const TeamList = ({ onClickVault }: Props) => {
             isConnected === false || selectedTeam === ""
               ? "cursor-not-allowed	"
               : "cursor-default	"
-          } bg-btn z-50 drop-shadow-join`}
+          } bg-btn z-50 drop-shadow-btn`}
+          style={{
+            borderImage:
+              "linear-gradient(180deg, #966E47 0%, rgba(185, 161, 138, 0) 100%) 1",
+            borderWidth: "1px",
+            borderStyle: "solid",
+          }}
           disabled={selectedTeam == ""}
           onClick={handleWithdraw}
         >
-          <span className="text-base font-Zen text-header">Withdraw</span>
-        </button>
+          <span className="text-base font-Zen text-header text-titleYellow">
+            Withdraw
+          </span>
+        </button> */}
       </div>
       <Dialog
         open={open}
