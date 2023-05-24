@@ -43,6 +43,8 @@ module.exports = {
         btnText: "rgba(210, 213, 217, 1)",
         completed: "rgba(134, 110, 87, 1)",
         disable: "rgba(59,63,63,1)",
+        alert: "rgba(202, 185, 167, 1)",
+        alertIcon: "rgba(140, 107, 40, 1)",
       },
       fontSize: {
         "1.5xl": "22px",

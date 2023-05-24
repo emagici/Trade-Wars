@@ -65,11 +65,11 @@ export default function WaitingGame() {
         >
           WAGER PAID SUCCESSFULLY
         </span>
-        <span className="text-base text-step font-Poppins drop-shadow-mdbg-transparent mt-[32px]">
-          In around 7 days
+        <span className="text-base text-tableColor font-Poppins drop-shadow-mdbg-transparent mt-[32px]">
+          You've joined
         </span>
         <span
-          className="text-[32px] text-step font-Zen drop-shadow-md	 bg-transparent"
+          className="text-[32px] text-tableColor font-Zen drop-shadow-md	 bg-transparent"
           style={{
             textShadow: "0px 2px 0px rgba(0, 0, 0, 0.2), 0px 0px 44px #329BFF",
           }}

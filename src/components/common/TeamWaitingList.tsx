@@ -241,30 +241,6 @@ const TeamWaitingList = ({ onClickVault }: Props) => {
             </TableBody>
           </Table>
         </TableContainer>
-        {/* <Dialog
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-          sx={{
-            backgroundColor: "transparent !important", // gets overridden if not important
-
-            ".MuiDialog-paper": {
-              backgroundColor: "rgba(17, 22, 23, 1)",
-              borderWidth: "0px",
-              width: "670px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            },
-          }}
-        >
-          <DialogContent className="bg-gap flex flex-col items-center justify-center">
-            <DialogContentText id="alert-dialog-description">
-              <PlayerStatusList teamID={currentTeamID} />
-            </DialogContentText>
-          </DialogContent>
-        </Dialog> */}
       </div>
       <div className="flex flex-row item-center mt-[50px]">
         <button
