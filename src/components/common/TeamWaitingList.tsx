@@ -17,9 +17,10 @@ import TableRow from "@mui/material/TableRow";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import TradeWarsJson from "../../utils/abis/TradeWars.json";
 
 import PlayerStatusList from "./PlayerStatusList";
-import { useAccount } from "wagmi";
+import { useAccount, useContractWrite } from "wagmi";
 
 const DUNE_API_KEY = process.env.NEXT_PUBLIC_DUNE_KEY;
 const client = new DuneClient(DUNE_API_KEY ?? "");
@@ -29,7 +30,7 @@ type Props = {
   onClickVault: (vault: Vault, index: number) => void;
 };
 interface Column {
-  id: "team" | "pnl" | "players";
+  id: "team" | "players";
   label: string;
   minWidth?: number;
   align?: "right";
@@ -43,31 +44,26 @@ const columns: Column[] = [
     label: "No.\u00a0Of\u00a0Players",
     minWidth: 170,
   },
-  {
-    id: "pnl",
-    label: "PNL",
-    minWidth: 170,
-    format: (value: number) => value.toLocaleString("en-US"),
-  },
 ];
 
 interface Data {
   team: string;
   players: number;
-  wager: string;
 }
 
-function createData(team: string, players: number, wager: string): Data {
-  return { team, players, wager };
+function createData(team: string, players: number): Data {
+  return { team, players };
 }
 
-const TeamStatusList = ({ onClickVault }: Props) => {
+const TeamWaitingList = ({ onClickVault }: Props) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [currentTeamID, setTeamID] = useState(-1);
+  const [isTX, setTXStatus] = useState(false);
   const [myTeam, setMyTeam] = useState(-1);
   const [rows, setRowsData] = useState([]);
   const { isConnected, address } = useAccount();
+  const [notiText, setNotiText] = useState("");
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -83,12 +79,46 @@ const TeamStatusList = ({ onClickVault }: Props) => {
   const router = useRouter();
   useFetchPublicData();
   const gameInfo = useGame();
-
+  const {
+    data: leaveData,
+    writeAsync: leaveGame,
+    isLoading: leaveLoading,
+    isSuccess: leaveSuccess,
+    status: leaveStatus,
+    error: leaveError,
+  } = useContractWrite({
+    address: "0xd8b2b4F698C5ce283Cf9c96A7BAC58E19b98f9e1",
+    abi: TradeWarsJson,
+    functionName: "leaveGame",
+  });
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
+  };
+  const handleWithdraw = async () => {
+    const gid = Number(router.query.gid);
+    if (
+      isConnected &&
+      !gameInfo.data![gid].teams!.some((row) => row.includes(address!))
+    ) {
+      setNotiText("You're not a member of this game.");
+      handleClickOpen();
+    } else {
+      try {
+        // @ts-ignore: Object is possibly 'null'.
+        const result = await leaveGame({ args: [gid] });
+        router.push({
+          pathname: "/SelectTeam",
+          query: {
+            gid: gid,
+          },
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
   };
   useEffect(() => {
     var rowData: any[] = [];
@@ -105,7 +135,7 @@ const TeamStatusList = ({ onClickVault }: Props) => {
             setMyTeam(idx);
           }
         });
-        rowData.push(createData("Team" + (idx + 1), item.length, "0"));
+        rowData.push(createData("Team" + (idx + 1), item.length));
       });
       // @ts-ignore: Object is possibly 'null'.
       setRowsData(rowData);
@@ -114,8 +144,20 @@ const TeamStatusList = ({ onClickVault }: Props) => {
     //   .refresh(queryID)
     //   .then((executionResult) => console.log(executionResult.result?.rows));
   }, [gameInfo, fastRefresh]);
+  useEffect(() => {
+    if (leaveLoading) {
+      setTXStatus(true);
+      setNotiText("Transaction Loading...");
+      setOpen(true);
+    }
+    if (leaveSuccess || leaveStatus === "error") {
+      setTXStatus(false);
+      setNotiText("");
+      setOpen(false);
+    }
+  }, [leaveLoading, leaveSuccess, leaveStatus]);
   return (
-    <div className="hidden flex items-center md:flex flex-col font-semibold">
+    <div className="hidden flex items-center md:flex flex-col font-semibold mb-[90px]">
       <div className="flex items-center w-[1156px] border-[12px] border-gap mt-[72px]">
         <TableContainer
           sx={{
@@ -165,7 +207,7 @@ const TeamStatusList = ({ onClickVault }: Props) => {
                       key={idx}
                       sx={{ maxHeight: "50px" }}
                       onClick={() => {
-                        setOpen(true);
+                        // setOpen(true);
                         setTeamID(page * rowsPerPage + idx + 1);
                       }}
                     >
@@ -193,42 +235,78 @@ const TeamStatusList = ({ onClickVault }: Props) => {
                       <TableCell key="players" align="left">
                         {row["players"]}
                       </TableCell>
-                      <TableCell key="status" align="left">
-                        $ {row["wager"]}
-                      </TableCell>
                     </TableRow>
                   );
                 })}
             </TableBody>
           </Table>
         </TableContainer>
-        <Dialog
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-          sx={{
-            backgroundColor: "transparent !important", // gets overridden if not important
-
-            ".MuiDialog-paper": {
-              backgroundColor: "rgba(17, 22, 23, 1)",
-              borderWidth: "0px",
-              width: "670px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            },
-          }}
-        >
-          <DialogContent className="bg-gap flex flex-col items-center justify-center">
-            <DialogContentText id="alert-dialog-description">
-              <PlayerStatusList teamID={currentTeamID} />
-            </DialogContentText>
-          </DialogContent>
-        </Dialog>
       </div>
+      <div className="flex flex-row item-center mt-[50px]">
+        <button
+          className={`rounded w-[172px] h-[50px] px-4 py-1 z-50 drop-shadow-join ml-[16px] bg-transparent  bg-btn z-50 drop-shadow-btn`}
+          style={{
+            borderImage:
+              "linear-gradient(180deg, #966E47 0%, rgba(185, 161, 138, 0) 100%) 1",
+            borderWidth: "1px",
+            borderStyle: "solid",
+          }}
+          disabled={!isConnected}
+          onClick={handleWithdraw}
+        >
+          <span className="text-base font-Zen text-header text-titleYellow">
+            Withdraw
+          </span>
+        </button>
+      </div>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        sx={{
+          backgroundColor: "transparent !important", // gets overridden if not important
+          ".MuiDialog-paper": {
+            backgroundColor: "rgba(17, 22, 23, 1)",
+            borderWidth: "0px",
+            width: "670px",
+            height: "350px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          },
+        }}
+      >
+        <DialogContent className="bg-gap flex flex-col items-center justify-center">
+          {isTX && (
+            <Image
+              src="/assets/icons/loader.gif"
+              alt="spice"
+              width={150}
+              height={150}
+            />
+          )}
+          <DialogContentText
+            id="alert-dialog-description"
+            style={{
+              textShadow:
+                "0px 2px 0px rgba(0, 0, 0, 0.2), 0px 0px 2144px #329BFF",
+            }}
+          >
+            <span className="text-btn text-2xl mt-[8px]">{notiText}</span>
+          </DialogContentText>
+        </DialogContent>
+        {!isTX && (
+          <DialogActions className="bg-gap">
+            {/* @ts-ignore */}
+            <Button onClick={handleClose} autoFocus>
+              OK
+            </Button>
+          </DialogActions>
+        )}
+      </Dialog>
     </div>
   );
 };
 
-export default TeamStatusList;
+export default TeamWaitingList;
