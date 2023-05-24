@@ -65,7 +65,7 @@ export default function WaitingGame() {
         >
           WAGER PAID SUCCESSFULLY
         </span>
-        <span className="text-base text-tableColor font-Poppins drop-shadow-mdbg-transparent mt-[32px]">
+        <span className="text-base text-tableColor font-Poppins drop-shadow-md bg-transparent mt-[32px]">
           You've joined
         </span>
         <span
