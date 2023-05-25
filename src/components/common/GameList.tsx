@@ -115,7 +115,7 @@ const GameList = ({ onClickVault }: Props) => {
           gid: idx,
         },
       });
-    } else if (status === 4 && isConnected) {
+    } else if (status === 4) {
       if (
         gameInfo.games !== undefined &&
         gameInfo.data !== undefined &&
@@ -335,7 +335,13 @@ const GameList = ({ onClickVault }: Props) => {
                     >
                       {row["players"]}
                     </TableCell>
-                    <TableCell key="joined" align="right">
+                    <TableCell
+                      key="joined"
+                      align="right"
+                      onClick={() =>
+                        handlePage(row["status"], page * rowsPerPage + idx)
+                      }
+                    >
                       {handleUserStatus(
                         row["status"],
                         page * rowsPerPage + idx

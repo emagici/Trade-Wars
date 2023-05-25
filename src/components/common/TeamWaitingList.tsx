@@ -17,10 +17,10 @@ import TableRow from "@mui/material/TableRow";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import TradeWarsJson from "../../utils/abis/TradeWars.json";
-
-import PlayerStatusList from "./PlayerStatusList";
 import { useAccount, useContractWrite } from "wagmi";
+
+import TradeWarsJson from "../../utils/abis/TradeWars.json";
+import PlayerStatusList from "./PlayerStatusList";
 
 const DUNE_API_KEY = process.env.NEXT_PUBLIC_DUNE_KEY;
 const client = new DuneClient(DUNE_API_KEY ?? "");
@@ -33,7 +33,7 @@ interface Column {
   id: "team" | "players";
   label: string;
   minWidth?: number;
-  align?: "right";
+  align?: "left";
   format?: (value: number) => string;
 }
 
@@ -43,6 +43,8 @@ const columns: Column[] = [
     id: "players",
     label: "No.\u00a0Of\u00a0Players",
     minWidth: 170,
+    // @ts-ignore: Object is possibly 'null'.
+    align: "right",
   },
 ];
 
@@ -157,11 +159,11 @@ const TeamWaitingList = ({ onClickVault }: Props) => {
     }
   }, [leaveLoading, leaveSuccess, leaveStatus]);
   return (
-    <div className="hidden flex items-center md:flex flex-col font-semibold mb-[90px]">
-      <div className="flex items-center w-[1156px] border-[12px] border-gap mt-[72px]">
+    <div className="hidden flex items-center md:flex flex-col font-semibold mb-[10px]">
+      <div className="flex items-center w-[1156px] border-[12px] border-gap mt-[40px]">
         <TableContainer
           sx={{
-            maxHeight: 400,
+            maxHeight: 350,
             maxWidth: 1156,
             "& th": {
               color: "#E8E1D4",
@@ -189,7 +191,7 @@ const TeamWaitingList = ({ onClickVault }: Props) => {
                   <TableCell
                     key={column.id}
                     align={column.align}
-                    style={{ minWidth: column.minWidth }}
+                    style={{ minWidth: column.minWidth, height: "50px" }}
                   >
                     {column.label}
                   </TableCell>
@@ -205,7 +207,6 @@ const TeamWaitingList = ({ onClickVault }: Props) => {
                       hover
                       tabIndex={-1}
                       key={idx}
-                      sx={{ maxHeight: "50px" }}
                       onClick={() => {
                         // setOpen(true);
                         setTeamID(page * rowsPerPage + idx + 1);
@@ -232,7 +233,7 @@ const TeamWaitingList = ({ onClickVault }: Props) => {
                           )}
                         </div>
                       </TableCell>
-                      <TableCell key="players" align="left">
+                      <TableCell key="players" align="right">
                         {row["players"]}
                       </TableCell>
                     </TableRow>
@@ -242,7 +243,7 @@ const TeamWaitingList = ({ onClickVault }: Props) => {
           </Table>
         </TableContainer>
       </div>
-      <div className="flex flex-row item-center mt-[50px]">
+      <div className="flex flex-row item-center mt-[16px]">
         <button
           className={`rounded w-[172px] h-[50px] px-4 py-1 z-50 drop-shadow-join ml-[16px] bg-transparent  bg-btn z-50 drop-shadow-btn`}
           style={{

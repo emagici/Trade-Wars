@@ -17,9 +17,9 @@ import TableRow from "@mui/material/TableRow";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useAccount } from "wagmi";
 
 import PlayerStatusList from "./PlayerStatusList";
-import { useAccount } from "wagmi";
 
 const DUNE_API_KEY = process.env.NEXT_PUBLIC_DUNE_KEY;
 const client = new DuneClient(DUNE_API_KEY ?? "");
@@ -163,7 +163,7 @@ const TeamStatusList = ({ onClickVault }: Props) => {
                       hover
                       tabIndex={-1}
                       key={idx}
-                      sx={{ maxHeight: "50px" }}
+                      sx={{ maxHeight: "50px", cursor: "pointer" }}
                       onClick={() => {
                         setOpen(true);
                         setTeamID(page * rowsPerPage + idx + 1);

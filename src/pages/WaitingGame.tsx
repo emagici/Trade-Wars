@@ -56,7 +56,7 @@ export default function WaitingGame() {
   }, [gameInfo, fastRefresh]);
   return (
     <div className="flex flex-col tracking-wide aspect-[1930/1080] bg-trader bg-cover">
-      <div className="md:flex justify-start items-center flex-col mt-10">
+      <div className="md:flex justify-start items-center flex-col mt-[64px]">
         <span
           className="text-[40px] text-tableColor font-Zen  bg-transparent w-100"
           style={{
@@ -69,7 +69,7 @@ export default function WaitingGame() {
           You've joined
         </span>
         <span
-          className="text-[32px] text-tableColor font-Zen drop-shadow-md	 bg-transparent"
+          className="text-[32px] text-tableColor font-Zen drop-shadow-md bg-transparent"
           style={{
             textShadow: "0px 2px 0px rgba(0, 0, 0, 0.2), 0px 0px 44px #329BFF",
           }}
@@ -77,7 +77,7 @@ export default function WaitingGame() {
           TEAM {myTeam + 1}
         </span>
       </div>
-      <div className="md:flex justify-start items-center flex-col mt-16">
+      <div className="md:flex justify-start items-center flex-col mt-[32px]">
         <span className="text-base text-step font-Zen  bg-transparent w-100">
           Winning amount
         </span>
